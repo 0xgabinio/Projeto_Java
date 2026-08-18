@@ -30,12 +30,18 @@ public class ListarFilmesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Lê e consome a mensagem flash de sucesso (setada por CadastrarFilmeServlet após um
-        // cadastro bem-sucedido) — só aparece uma vez, mesmo se a página for recarregada.
+        // Lê e consome mensagens flash (setadas por CadastrarFilmeServlet/ExcluirFilmeServlet)
+        // — só aparecem uma vez, mesmo se a página for recarregada.
         HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("mensagemSucesso") != null) {
-            request.setAttribute("mensagemSucesso", session.getAttribute("mensagemSucesso"));
-            session.removeAttribute("mensagemSucesso");
+        if (session != null) {
+            if (session.getAttribute("mensagemSucesso") != null) {
+                request.setAttribute("mensagemSucesso", session.getAttribute("mensagemSucesso"));
+                session.removeAttribute("mensagemSucesso");
+            }
+            if (session.getAttribute("erros") != null) {
+                request.setAttribute("erros", session.getAttribute("erros"));
+                session.removeAttribute("erros");
+            }
         }
 
         try {

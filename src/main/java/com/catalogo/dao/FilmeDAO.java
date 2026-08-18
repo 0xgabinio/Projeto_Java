@@ -28,4 +28,32 @@ public interface FilmeDAO {
      * @throws SQLException se a consulta falhar
      */
     List<Filme> listarTodos() throws SQLException;
+
+    /**
+     * Busca um filme pelo seu {@code id}.
+     *
+     * @param id chave primária do filme
+     * @return o filme encontrado, ou {@code null} se não existir nenhum com esse {@code id}
+     * @throws SQLException se a consulta falhar
+     */
+    Filme buscarPorId(int id) throws SQLException;
+
+    /**
+     * Atualiza um filme já existente, identificado por {@code filme.getId()}.
+     *
+     * @param filme filme com os novos valores (o {@code id} deve corresponder a um registro
+     *              existente; esta camada não valida a existência — isso é responsabilidade
+     *              do Servlet, via {@link #buscarPorId(int)})
+     * @throws SQLException se a atualização falhar
+     */
+    void atualizar(Filme filme) throws SQLException;
+
+    /**
+     * Exclui um filme pelo seu {@code id}. Não lança exceção se o {@code id} não existir
+     * (0 linhas afetadas não é considerado erro).
+     *
+     * @param id chave primária do filme a excluir
+     * @throws SQLException se a exclusão falhar
+     */
+    void excluir(int id) throws SQLException;
 }

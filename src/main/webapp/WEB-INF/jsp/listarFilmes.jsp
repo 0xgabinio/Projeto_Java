@@ -37,6 +37,7 @@
                 <th>Diretor</th>
                 <th>Ano</th>
                 <th>Gênero</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -46,6 +47,9 @@
                     <td><c:out value="${filme.diretor}"/></td>
                     <td>${filme.anoLancamento > 0 ? filme.anoLancamento : '—'}</td>
                     <td><c:out value="${filme.genero}"/></td>
+                    <td>
+                        <a href="${pageContext.request.contextPath}/detalharFilme?id=${filme.id}">Ver detalhes</a>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>
