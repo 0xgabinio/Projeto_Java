@@ -1,0 +1,47 @@
+@startuml diagrama-classes-geral
+' Diagrama de classes consolidado do Catálogo Simples de Livros/Filmes.
+' Acumulado incrementalmente pela skill modelar-uml a cada spec modelada.
+' Origem desta versão: specs/cadastrar-item.md.
+
+class ItemMidia {
+  -id: int
+  -titulo: String
+  -autorDiretor: String
+  -anoLancamento: int
+  -genero: String
+  -sinopse: String
+  -tipoMidia: String
+  +getId(): int
+  +getTitulo(): String
+  +setTitulo(titulo: String): void
+  +getAutorDiretor(): String
+  +setAutorDiretor(autorDiretor: String): void
+  +getAnoLancamento(): int
+  +setAnoLancamento(anoLancamento: int): void
+  +getGenero(): String
+  +setGenero(genero: String): void
+  +getSinopse(): String
+  +setSinopse(sinopse: String): void
+  +getTipoMidia(): String
+  +setTipoMidia(tipoMidia: String): void
+}
+
+interface ItemMidiaDAO {
+  +inserir(item: ItemMidia): void
+}
+
+class ItemMidiaDAOImpl {
+  -conexao: Connection
+  +inserir(item: ItemMidia): void
+}
+
+class CadastrarItemServlet {
+  +doGet(req, resp): void
+  +doPost(req, resp): void
+}
+
+ItemMidiaDAOImpl ..|> ItemMidiaDAO
+CadastrarItemServlet --> ItemMidiaDAO : usa
+ItemMidiaDAOImpl --> ItemMidia : persiste
+
+@enduml
