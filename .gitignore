@@ -1,17 +1,20 @@
 # .gitignore — Catálogo Simples de Livros/Filmes
 #
-# Por decisão explícita do autor do projeto, NADA relacionado a ferramentas de IA (Claude
-# Code) pode estar presente neste repositório público. Tudo abaixo fica só local, em disco,
-# disponível para uso do próprio autor, mas fora do histórico git/GitHub. O repositório
-# público mostra apenas o código-fonte do catálogo (quando existir) e o PDF do enunciado.
-#   CLAUDE.md              (memória/instruções de projeto do Claude Code)
-#   .claude/               (skills e agentes do Claude Code)
-#   docs/                  (SDD principal, trilha de segurança, relatório técnico)
-#   specs/                 (especificações das funcionalidades)
-#   security/              (repositório de achados do pentest blackbox)
+# Por decisão explícita do autor do projeto, NADA relacionado a ferramentas/processo de IA
+# (Claude Code, SDD, specs, pentest) pode estar presente neste repositório público — fica só
+# local, em disco. Isso é diferente de documentação do PROJETO em si (diagramas UML, DER,
+# relatório técnico, manual do usuário), que o PDF do enunciado exige como entregável e por
+# isso PRECISA estar no repositório público:
+#   CLAUDE.md              (ignorado — memória/instruções de projeto do Claude Code)
+#   .claude/                (ignorado — skills e agentes do Claude Code)
+#   docs/sdd/               (ignorado — processo SDD, incl. trilha de segurança/pentest)
+#   docs/modelagem/         (RASTREADO — diagrama de classes, casos de uso, DER: exigidos pelo PDF)
+#   docs/relatorio-tecnico.md, docs/manual-usuario.md (RASTREADOS — entregáveis do PDF)
+#   specs/                  (ignorado — especificações internas, processo de IA)
+#   security/               (ignorado — repositório de achados do pentest blackbox)
 CLAUDE.md
 .claude/
-docs/
+docs/sdd/
 specs/
 security/
 
