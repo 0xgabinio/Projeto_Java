@@ -1,7 +1,8 @@
 @startuml diagrama-classes-geral
 ' Diagrama de classes consolidado do Catálogo Simples de Filmes.
 ' Acumulado incrementalmente pela skill modelar-uml a cada spec modelada.
-' Origem desta versão: specs/cadastrar-filme.md, specs/listar-filmes.md.
+' Origem desta versão: specs/cadastrar-filme.md, specs/listar-filmes.md, specs/detalhar-filme.md,
+' specs/editar-filme.md, specs/excluir-filme.md.
 
 class Filme {
   -id: int
@@ -26,12 +27,18 @@ class Filme {
 interface FilmeDAO {
   +inserir(filme: Filme): void
   +listarTodos(): List<Filme>
+  +buscarPorId(id: int): Filme
+  +atualizar(filme: Filme): void
+  +excluir(id: int): void
 }
 
 class FilmeDAOImpl {
   -conexao: Connection
   +inserir(filme: Filme): void
   +listarTodos(): List<Filme>
+  +buscarPorId(id: int): Filme
+  +atualizar(filme: Filme): void
+  +excluir(id: int): void
 }
 
 class CadastrarFilmeServlet {
@@ -43,9 +50,32 @@ class ListarFilmesServlet {
   +doGet(req, resp): void
 }
 
+class DetalharFilmeServlet {
+  +doGet(req, resp): void
+}
+
+class EditarFilmeServlet {
+  +doGet(req, resp): void
+  +doPost(req, resp): void
+}
+
+class ExcluirFilmeServlet {
+  +doPost(req, resp): void
+}
+
+class FilmeValidator {
+  +{static} validar(titulo, diretor, anoLancamentoStr, genero): List<String>
+  +{static} tratarEntrada(valor: String): String
+}
+
 FilmeDAOImpl ..|> FilmeDAO
 CadastrarFilmeServlet --> FilmeDAO : usa
+CadastrarFilmeServlet --> FilmeValidator : usa
 ListarFilmesServlet --> FilmeDAO : usa
-FilmeDAOImpl --> Filme : persiste/retorna
+DetalharFilmeServlet --> FilmeDAO : usa
+EditarFilmeServlet --> FilmeDAO : usa
+EditarFilmeServlet --> FilmeValidator : usa
+ExcluirFilmeServlet --> FilmeDAO : usa
+FilmeDAOImpl --> Filme : persiste/retorna/atualiza/exclui
 
 @enduml
