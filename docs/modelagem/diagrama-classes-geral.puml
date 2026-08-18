@@ -1,7 +1,7 @@
 @startuml diagrama-classes-geral
 ' Diagrama de classes consolidado do Catálogo Simples de Filmes.
 ' Acumulado incrementalmente pela skill modelar-uml a cada spec modelada.
-' Origem desta versão: specs/cadastrar-filme.md.
+' Origem desta versão: specs/cadastrar-filme.md, specs/listar-filmes.md.
 
 class Filme {
   -id: int
@@ -25,11 +25,13 @@ class Filme {
 
 interface FilmeDAO {
   +inserir(filme: Filme): void
+  +listarTodos(): List<Filme>
 }
 
 class FilmeDAOImpl {
   -conexao: Connection
   +inserir(filme: Filme): void
+  +listarTodos(): List<Filme>
 }
 
 class CadastrarFilmeServlet {
@@ -37,8 +39,13 @@ class CadastrarFilmeServlet {
   +doPost(req, resp): void
 }
 
+class ListarFilmesServlet {
+  +doGet(req, resp): void
+}
+
 FilmeDAOImpl ..|> FilmeDAO
 CadastrarFilmeServlet --> FilmeDAO : usa
-FilmeDAOImpl --> Filme : persiste
+ListarFilmesServlet --> FilmeDAO : usa
+FilmeDAOImpl --> Filme : persiste/retorna
 
 @enduml
