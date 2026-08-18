@@ -1,0 +1,60 @@
+# .gitignore — Catálogo Simples de Livros/Filmes
+#
+# Por decisão explícita do autor do projeto, NADA relacionado a ferramentas de IA (Claude
+# Code) pode estar presente neste repositório público. Tudo abaixo fica só local, em disco,
+# disponível para uso do próprio autor, mas fora do histórico git/GitHub. O repositório
+# público mostra apenas o código-fonte do catálogo (quando existir) e o PDF do enunciado.
+#   CLAUDE.md              (memória/instruções de projeto do Claude Code)
+#   .claude/               (skills e agentes do Claude Code)
+#   docs/                  (SDD principal, trilha de segurança, relatório técnico)
+#   specs/                 (especificações das funcionalidades)
+#   security/              (repositório de achados do pentest blackbox)
+CLAUDE.md
+.claude/
+docs/
+specs/
+security/
+
+### Build (Maven) ###
+target/
+*.class
+*.war
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+### IDEs ###
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+.metadata/
+nbproject/
+nbbuild/
+nbdist/
+.vscode/
+
+### Sistema Operacional ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### Logs ###
+*.log
+logs/
+
+### Segredos e configuração local (JDBC/DB) ###
+# Nunca versionar credenciais reais de banco de dados — ver trilha de segurança
+# (docs/sdd/seguranca/checklist-owasp-top10.md, categoria A02/CWE-259/CWE-798).
+# Mantenha um "db.properties.example" versionado como modelo, sem credenciais reais.
+db.properties
+application-local.properties
+.env
+.env.*
+!.env.example
+
+### Cobertura de testes / relatórios de build (quando existirem) ###
+*.exec
+coverage/
