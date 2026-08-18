@@ -2,7 +2,7 @@
 ' Diagrama de classes consolidado do Catálogo Simples de Filmes.
 ' Acumulado incrementalmente pela skill modelar-uml a cada spec modelada.
 ' Origem desta versão: specs/cadastrar-filme.md, specs/listar-filmes.md, specs/detalhar-filme.md,
-' specs/editar-filme.md, specs/excluir-filme.md.
+' specs/editar-filme.md, specs/excluir-filme.md, specs/buscar-filme.md.
 
 class Filme {
   -id: int
@@ -30,6 +30,7 @@ interface FilmeDAO {
   +buscarPorId(id: int): Filme
   +atualizar(filme: Filme): void
   +excluir(id: int): void
+  +buscarPorTituloOuDiretor(termo: String): List<Filme>
 }
 
 class FilmeDAOImpl {
@@ -39,6 +40,7 @@ class FilmeDAOImpl {
   +buscarPorId(id: int): Filme
   +atualizar(filme: Filme): void
   +excluir(id: int): void
+  +buscarPorTituloOuDiretor(termo: String): List<Filme>
 }
 
 class CadastrarFilmeServlet {
