@@ -1,8 +1,8 @@
 package com.catalogo.servlet;
 
-import com.catalogo.dao.ItemMidiaDAO;
-import com.catalogo.dao.ItemMidiaDAOImpl;
-import com.catalogo.model.ItemMidia;
+import com.catalogo.dao.FilmeDAO;
+import com.catalogo.dao.FilmeDAOImpl;
+import com.catalogo.model.Filme;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,27 +15,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller (Servlet) para o cadastro de um novo {@link ItemMidia}.
+ * Controller (Servlet) para o cadastro de um novo {@link Filme}.
  * <p>
- * Implementa {@code specs/cadastrar-item.md}: recebe os dados do formulário
- * ({@code cadastroItem.jsp}), valida antes de persistir, delega a inserção ao
- * {@link ItemMidiaDAO} e nunca expõe detalhes técnicos (stack trace, SQL) ao usuário final —
+ * Implementa {@code specs/cadastrar-filme.md}: recebe os dados do formulário
+ * ({@code cadastroFilme.jsp}), valida antes de persistir, delega a inserção ao
+ * {@link FilmeDAO} e nunca expõe detalhes técnicos (stack trace, SQL) ao usuário final —
  * Situação-Problema 2 do PDF do enunciado.
  */
-@WebServlet("/cadastrarItem")
-public class CadastrarItemServlet extends HttpServlet {
+@WebServlet("/cadastrarFilme")
+public class CadastrarFilmeServlet extends HttpServlet {
 
     private static final int TITULO_MAX = 255;
-    private static final int AUTOR_DIRETOR_MAX = 255;
+    private static final int DIRETOR_MAX = 255;
     private static final int GENERO_MAX = 100;
-    private static final List<String> TIPOS_VALIDOS = List.of("Livro", "Filme", "Série");
 
-    private final ItemMidiaDAO itemMidiaDAO = new ItemMidiaDAOImpl();
+    private final FilmeDAO filmeDAO = new FilmeDAOImpl();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/jsp/cadastroItem.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
     }
 
     @Override
@@ -43,63 +42,58 @@ public class CadastrarItemServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String titulo = tratarEntrada(request.getParameter("titulo"));
-        String autorDiretor = tratarEntrada(request.getParameter("autorDiretor"));
+        String diretor = tratarEntrada(request.getParameter("diretor"));
         String anoLancamentoStr = tratarEntrada(request.getParameter("anoLancamento"));
         String genero = tratarEntrada(request.getParameter("genero"));
         String sinopse = tratarEntrada(request.getParameter("sinopse"));
-        String tipoMidia = tratarEntrada(request.getParameter("tipoMidia"));
 
-        List<String> erros = validar(titulo, autorDiretor, anoLancamentoStr, genero, tipoMidia);
+        List<String> erros = validar(titulo, diretor, anoLancamentoStr, genero);
 
         // Reexibe os valores preenchidos em caso de erro, para o usuário não perder o que digitou.
         request.setAttribute("titulo", titulo);
-        request.setAttribute("autorDiretor", autorDiretor);
+        request.setAttribute("diretor", diretor);
         request.setAttribute("anoLancamento", anoLancamentoStr);
         request.setAttribute("genero", genero);
         request.setAttribute("sinopse", sinopse);
-        request.setAttribute("tipoMidia", tipoMidia);
 
         if (!erros.isEmpty()) {
             request.setAttribute("erros", erros);
-            request.getRequestDispatcher("/WEB-INF/jsp/cadastroItem.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
             return;
         }
 
-        ItemMidia item = new ItemMidia();
-        item.setTitulo(titulo);
-        item.setAutorDiretor(autorDiretor);
-        item.setAnoLancamento(anoLancamentoStr == null ? 0 : Integer.parseInt(anoLancamentoStr));
-        item.setGenero(genero);
-        item.setSinopse(sinopse);
-        item.setTipoMidia(tipoMidia);
+        Filme filme = new Filme();
+        filme.setTitulo(titulo);
+        filme.setDiretor(diretor);
+        filme.setAnoLancamento(anoLancamentoStr == null ? 0 : Integer.parseInt(anoLancamentoStr));
+        filme.setGenero(genero);
+        filme.setSinopse(sinopse);
 
         try {
-            itemMidiaDAO.inserir(item);
+            filmeDAO.inserir(filme);
         } catch (SQLException e) {
             // Log server-side; usuário recebe só uma mensagem amigável (nunca a exceção crua).
-            getServletContext().log("Falha ao inserir ItemMidia", e);
+            getServletContext().log("Falha ao inserir Filme", e);
             request.setAttribute("erros", List.of(
-                    "Não foi possível salvar o item agora. Tente novamente em instantes."));
-            request.getRequestDispatcher("/WEB-INF/jsp/cadastroItem.jsp").forward(request, response);
+                    "Não foi possível salvar o filme agora. Tente novamente em instantes."));
+            request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
             return;
         }
 
-        request.setAttribute("mensagemSucesso", "Item \"" + titulo + "\" cadastrado com sucesso!");
+        request.setAttribute("mensagemSucesso", "Filme \"" + titulo + "\" cadastrado com sucesso!");
         request.removeAttribute("titulo");
-        request.removeAttribute("autorDiretor");
+        request.removeAttribute("diretor");
         request.removeAttribute("anoLancamento");
         request.removeAttribute("genero");
         request.removeAttribute("sinopse");
-        request.removeAttribute("tipoMidia");
-        request.getRequestDispatcher("/WEB-INF/jsp/cadastroItem.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
     }
 
     /**
      * Valida os dados recebidos do formulário antes de qualquer tentativa de persistência
      * (ver Considerações de Segurança da spec: obrigatoriedade, tipo e tamanho máximo).
      */
-    private List<String> validar(String titulo, String autorDiretor, String anoLancamentoStr,
-                                  String genero, String tipoMidia) {
+    private List<String> validar(String titulo, String diretor, String anoLancamentoStr, String genero) {
         List<String> erros = new ArrayList<>();
 
         if (titulo == null) {
@@ -108,14 +102,8 @@ public class CadastrarItemServlet extends HttpServlet {
             erros.add("O Título deve ter no máximo " + TITULO_MAX + " caracteres.");
         }
 
-        if (tipoMidia == null) {
-            erros.add("O campo Tipo de Mídia é obrigatório.");
-        } else if (!TIPOS_VALIDOS.contains(tipoMidia)) {
-            erros.add("Tipo de Mídia inválido. Selecione Livro, Filme ou Série.");
-        }
-
-        if (autorDiretor != null && autorDiretor.length() > AUTOR_DIRETOR_MAX) {
-            erros.add("Autor/Diretor deve ter no máximo " + AUTOR_DIRETOR_MAX + " caracteres.");
+        if (diretor != null && diretor.length() > DIRETOR_MAX) {
+            erros.add("Diretor deve ter no máximo " + DIRETOR_MAX + " caracteres.");
         }
 
         if (genero != null && genero.length() > GENERO_MAX) {

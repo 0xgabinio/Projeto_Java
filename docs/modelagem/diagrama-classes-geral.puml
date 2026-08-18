@@ -1,47 +1,44 @@
 @startuml diagrama-classes-geral
-' Diagrama de classes consolidado do Catálogo Simples de Livros/Filmes.
+' Diagrama de classes consolidado do Catálogo Simples de Filmes.
 ' Acumulado incrementalmente pela skill modelar-uml a cada spec modelada.
-' Origem desta versão: specs/cadastrar-item.md.
+' Origem desta versão: specs/cadastrar-filme.md.
 
-class ItemMidia {
+class Filme {
   -id: int
   -titulo: String
-  -autorDiretor: String
+  -diretor: String
   -anoLancamento: int
   -genero: String
   -sinopse: String
-  -tipoMidia: String
   +getId(): int
   +getTitulo(): String
   +setTitulo(titulo: String): void
-  +getAutorDiretor(): String
-  +setAutorDiretor(autorDiretor: String): void
+  +getDiretor(): String
+  +setDiretor(diretor: String): void
   +getAnoLancamento(): int
   +setAnoLancamento(anoLancamento: int): void
   +getGenero(): String
   +setGenero(genero: String): void
   +getSinopse(): String
   +setSinopse(sinopse: String): void
-  +getTipoMidia(): String
-  +setTipoMidia(tipoMidia: String): void
 }
 
-interface ItemMidiaDAO {
-  +inserir(item: ItemMidia): void
+interface FilmeDAO {
+  +inserir(filme: Filme): void
 }
 
-class ItemMidiaDAOImpl {
+class FilmeDAOImpl {
   -conexao: Connection
-  +inserir(item: ItemMidia): void
+  +inserir(filme: Filme): void
 }
 
-class CadastrarItemServlet {
+class CadastrarFilmeServlet {
   +doGet(req, resp): void
   +doPost(req, resp): void
 }
 
-ItemMidiaDAOImpl ..|> ItemMidiaDAO
-CadastrarItemServlet --> ItemMidiaDAO : usa
-ItemMidiaDAOImpl --> ItemMidia : persiste
+FilmeDAOImpl ..|> FilmeDAO
+CadastrarFilmeServlet --> FilmeDAO : usa
+FilmeDAOImpl --> Filme : persiste
 
 @enduml
