@@ -35,6 +35,12 @@ public class FilmeDAOImpl implements FilmeDAO {
 
     private static final String SQL_EXCLUIR = "DELETE FROM filme WHERE id = ?";
 
+    // Situação-Problema 1 do PDF: LIKE via PreparedStatement, "%termo%" passado como
+    // parâmetro — nunca concatenar o termo de busca diretamente na string SQL.
+    private static final String SQL_BUSCAR_POR_TITULO_OU_DIRETOR =
+            "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse FROM filme "
+                    + "WHERE titulo LIKE ? OR diretor LIKE ? ORDER BY titulo";
+
     @Override
     public void inserir(Filme filme) throws SQLException {
         try (Connection conexao = FabricaDeConexoes.getConexao();
@@ -121,6 +127,27 @@ public class FilmeDAOImpl implements FilmeDAO {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
+    }
+
+    @Override
+    public List<Filme> buscarPorTituloOuDiretor(String termo) throws SQLException {
+        List<Filme> filmes = new ArrayList<>();
+        String termoComCuringas = "%" + termo + "%";
+
+        try (Connection conexao = FabricaDeConexoes.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(SQL_BUSCAR_POR_TITULO_OU_DIRETOR)) {
+
+            stmt.setString(1, termoComCuringas);
+            stmt.setString(2, termoComCuringas);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    filmes.add(mapearFilme(rs));
+                }
+            }
+        }
+
+        return filmes;
     }
 
     /** Mapeia a linha atual do {@link ResultSet} para um {@link Filme}. */

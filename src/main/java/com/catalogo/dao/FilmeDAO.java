@@ -56,4 +56,17 @@ public interface FilmeDAO {
      * @throws SQLException se a exclusão falhar
      */
     void excluir(int id) throws SQLException;
+
+    /**
+     * Busca filmes cujo {@code titulo} ou {@code diretor} contenham o {@code termo} (busca
+     * parcial, case-insensitive). Cenário da Situação-Problema 1 do enunciado da disciplina —
+     * implementações devem usar {@code LIKE} via {@link java.sql.PreparedStatement}, nunca
+     * concatenar {@code termo} diretamente na string SQL.
+     *
+     * @param termo termo de busca (não deve incluir os caracteres curinga {@code %} — a
+     *              implementação os adiciona)
+     * @return lista de filmes correspondentes, ordenada por título (vazia se nenhum corresponder)
+     * @throws SQLException se a consulta falhar
+     */
+    List<Filme> buscarPorTituloOuDiretor(String termo) throws SQLException;
 }

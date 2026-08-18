@@ -3,6 +3,7 @@ package com.catalogo.servlet;
 import com.catalogo.dao.FilmeDAO;
 import com.catalogo.dao.FilmeDAOImpl;
 import com.catalogo.model.Filme;
+import com.catalogo.service.FilmeValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,9 +18,10 @@ import java.util.List;
 /**
  * Controller (Servlet) para a listagem de {@link Filme}s cadastrados.
  * <p>
- * Implementa {@code specs/listar-filmes.md}: consulta todos os filmes via {@link FilmeDAO} e
- * encaminha para {@code listarFilmes.jsp}, sem expor detalhes técnicos ao usuário em caso de
- * falha (Situação-Problema 2 do PDF do enunciado).
+ * Implementa {@code specs/listar-filmes.md} e {@code specs/buscar-filme.md}: consulta todos os
+ * filmes (ou, se um parâmetro {@code termo} for informado, apenas os que correspondem por
+ * título/diretor) via {@link FilmeDAO} e encaminha para {@code listarFilmes.jsp}, sem expor
+ * detalhes técnicos ao usuário em caso de falha (Situação-Problema 2 do PDF do enunciado).
  */
 @WebServlet("/listarFilmes")
 public class ListarFilmesServlet extends HttpServlet {
@@ -44,11 +46,16 @@ public class ListarFilmesServlet extends HttpServlet {
             }
         }
 
+        String termo = FilmeValidator.tratarEntrada(request.getParameter("termo"));
+        request.setAttribute("termo", termo);
+
         try {
-            List<Filme> filmes = filmeDAO.listarTodos();
+            List<Filme> filmes = termo == null
+                    ? filmeDAO.listarTodos()
+                    : filmeDAO.buscarPorTituloOuDiretor(termo);
             request.setAttribute("filmes", filmes);
         } catch (SQLException e) {
-            getServletContext().log("Falha ao listar filmes", e);
+            getServletContext().log("Falha ao listar/buscar filmes (termo=" + termo + ")", e);
             request.setAttribute("erros", List.of(
                     "Não foi possível carregar a lista de filmes agora. Tente novamente em instantes."));
         }

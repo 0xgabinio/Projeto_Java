@@ -201,4 +201,45 @@ class FilmeDAOTest {
     void excluir_naoDeveLancarExcecao_quandoIdNaoExiste() {
         assertDoesNotThrow(() -> filmeDAO.excluir(999999));
     }
+
+    // ---- buscarPorTituloOuDiretor ----
+
+    @Test
+    void buscarPorTituloOuDiretor_deveEncontrarPorTitulo() throws SQLException {
+        filmeDAO.inserir(criarFilme("Duna", "Denis Villeneuve", 2021, "Ficção Científica", null));
+        filmeDAO.inserir(criarFilme("Oppenheimer", "Christopher Nolan", 2023, "Drama", null));
+
+        List<Filme> encontrados = filmeDAO.buscarPorTituloOuDiretor("Dun");
+
+        assertEquals(1, encontrados.size());
+        assertEquals("Duna", encontrados.get(0).getTitulo());
+    }
+
+    @Test
+    void buscarPorTituloOuDiretor_deveEncontrarPorDiretor() throws SQLException {
+        filmeDAO.inserir(criarFilme("Duna", "Denis Villeneuve", 2021, "Ficção Científica", null));
+        filmeDAO.inserir(criarFilme("Oppenheimer", "Christopher Nolan", 2023, "Drama", null));
+
+        List<Filme> encontrados = filmeDAO.buscarPorTituloOuDiretor("Nolan");
+
+        assertEquals(1, encontrados.size());
+        assertEquals("Oppenheimer", encontrados.get(0).getTitulo());
+    }
+
+    @Test
+    void buscarPorTituloOuDiretor_deveRetornarListaVazia_quandoSemCorrespondencia() throws SQLException {
+        filmeDAO.inserir(criarFilme("Duna", "Denis Villeneuve", 2021, "Ficção Científica", null));
+
+        List<Filme> encontrados = filmeDAO.buscarPorTituloOuDiretor("termo-sem-correspondencia-xyz");
+
+        assertNotNull(encontrados);
+        assertTrue(encontrados.isEmpty());
+    }
+
+    @Test
+    void buscarPorTituloOuDiretor_naoDeveLancarExcecao_comAspasSimples() {
+        // Sondagem de SQL Injection (Situação-Problema 1) — deve ser tratado como dado literal
+        // pelo PreparedStatement, nunca gerar erro de sintaxe SQL.
+        assertDoesNotThrow(() -> filmeDAO.buscarPorTituloOuDiretor("'"));
+    }
 }

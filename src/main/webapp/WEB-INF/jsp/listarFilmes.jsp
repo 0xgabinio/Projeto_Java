@@ -11,6 +11,17 @@
 
 <p><a href="${pageContext.request.contextPath}/cadastrarFilme">Cadastrar novo filme</a></p>
 
+<%-- Busca por título ou diretor (specs/buscar-filme.md) — GET simples na própria listagem;
+     "termo" é reexibido via <c:out> (previne XSS refletido). --%>
+<form action="${pageContext.request.contextPath}/listarFilmes" method="get">
+    <label for="termo">Buscar por título ou diretor</label><br>
+    <input type="text" id="termo" name="termo" maxlength="255" value="<c:out value="${termo}"/>">
+    <button type="submit">Buscar</button>
+    <c:if test="${not empty termo}">
+        <a href="${pageContext.request.contextPath}/listarFilmes">Limpar busca</a>
+    </c:if>
+</form>
+
 <c:if test="${not empty mensagemSucesso}">
     <p style="color: green;"><c:out value="${mensagemSucesso}"/></p>
 </c:if>
@@ -24,6 +35,9 @@
 </c:if>
 
 <c:choose>
+    <c:when test="${empty filmes and not empty termo}">
+        <p>Nenhum filme encontrado para "<c:out value="${termo}"/>".</p>
+    </c:when>
     <c:when test="${empty filmes}">
         <p>Nenhum filme cadastrado ainda.</p>
     </c:when>
