@@ -3,6 +3,7 @@ package com.catalogo.servlet;
 import com.catalogo.dao.FilmeDAO;
 import com.catalogo.dao.FilmeDAOImpl;
 import com.catalogo.model.Filme;
+import com.catalogo.service.FilmeValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,23 +13,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Controller (Servlet) para o cadastro de um novo {@link Filme}.
  * <p>
  * Implementa {@code specs/cadastrar-filme.md}: recebe os dados do formulário
- * ({@code cadastroFilme.jsp}), valida antes de persistir, delega a inserção ao
- * {@link FilmeDAO} e nunca expõe detalhes técnicos (stack trace, SQL) ao usuário final —
- * Situação-Problema 2 do PDF do enunciado.
+ * ({@code cadastroFilme.jsp}), valida (via {@link FilmeValidator}) antes de persistir, delega
+ * a inserção ao {@link FilmeDAO} e nunca expõe detalhes técnicos (stack trace, SQL) ao
+ * usuário final — Situação-Problema 2 do PDF do enunciado.
  */
 @WebServlet("/cadastrarFilme")
 public class CadastrarFilmeServlet extends HttpServlet {
-
-    private static final int TITULO_MAX = 255;
-    private static final int DIRETOR_MAX = 255;
-    private static final int GENERO_MAX = 100;
 
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
 
@@ -42,13 +38,13 @@ public class CadastrarFilmeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String titulo = tratarEntrada(request.getParameter("titulo"));
-        String diretor = tratarEntrada(request.getParameter("diretor"));
-        String anoLancamentoStr = tratarEntrada(request.getParameter("anoLancamento"));
-        String genero = tratarEntrada(request.getParameter("genero"));
-        String sinopse = tratarEntrada(request.getParameter("sinopse"));
+        String titulo = FilmeValidator.tratarEntrada(request.getParameter("titulo"));
+        String diretor = FilmeValidator.tratarEntrada(request.getParameter("diretor"));
+        String anoLancamentoStr = FilmeValidator.tratarEntrada(request.getParameter("anoLancamento"));
+        String genero = FilmeValidator.tratarEntrada(request.getParameter("genero"));
+        String sinopse = FilmeValidator.tratarEntrada(request.getParameter("sinopse"));
 
-        List<String> erros = validar(titulo, diretor, anoLancamentoStr, genero);
+        List<String> erros = FilmeValidator.validar(titulo, diretor, anoLancamentoStr, genero);
 
         // Reexibe os valores preenchidos em caso de erro, para o usuário não perder o que digitou.
         request.setAttribute("titulo", titulo);
@@ -86,46 +82,5 @@ public class CadastrarFilmeServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("mensagemSucesso", "Filme \"" + titulo + "\" cadastrado com sucesso!");
         response.sendRedirect(request.getContextPath() + "/listarFilmes");
-    }
-
-    /**
-     * Valida os dados recebidos do formulário antes de qualquer tentativa de persistência
-     * (ver Considerações de Segurança da spec: obrigatoriedade, tipo e tamanho máximo).
-     */
-    private List<String> validar(String titulo, String diretor, String anoLancamentoStr, String genero) {
-        List<String> erros = new ArrayList<>();
-
-        if (titulo == null) {
-            erros.add("O campo Título é obrigatório.");
-        } else if (titulo.length() > TITULO_MAX) {
-            erros.add("O Título deve ter no máximo " + TITULO_MAX + " caracteres.");
-        }
-
-        if (diretor != null && diretor.length() > DIRETOR_MAX) {
-            erros.add("Diretor deve ter no máximo " + DIRETOR_MAX + " caracteres.");
-        }
-
-        if (genero != null && genero.length() > GENERO_MAX) {
-            erros.add("Gênero deve ter no máximo " + GENERO_MAX + " caracteres.");
-        }
-
-        if (anoLancamentoStr != null) {
-            try {
-                Integer.parseInt(anoLancamentoStr);
-            } catch (NumberFormatException e) {
-                erros.add("Ano de Lançamento deve ser um número inteiro.");
-            }
-        }
-
-        return erros;
-    }
-
-    /** Remove espaços nas pontas e converte string vazia em {@code null}. */
-    private String tratarEntrada(String valor) {
-        if (valor == null) {
-            return null;
-        }
-        String tratado = valor.trim();
-        return tratado.isEmpty() ? null : tratado;
     }
 }
