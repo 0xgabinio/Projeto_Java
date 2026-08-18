@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -80,13 +81,11 @@ public class CadastrarFilmeServlet extends HttpServlet {
             return;
         }
 
-        request.setAttribute("mensagemSucesso", "Filme \"" + titulo + "\" cadastrado com sucesso!");
-        request.removeAttribute("titulo");
-        request.removeAttribute("diretor");
-        request.removeAttribute("anoLancamento");
-        request.removeAttribute("genero");
-        request.removeAttribute("sinopse");
-        request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
+        // Mensagem de sucesso via sessão (padrão flash message): sobrevive ao redirect,
+        // é lida e removida por ListarFilmesServlet (RF-05 de specs/listar-filmes.md).
+        HttpSession session = request.getSession();
+        session.setAttribute("mensagemSucesso", "Filme \"" + titulo + "\" cadastrado com sucesso!");
+        response.sendRedirect(request.getContextPath() + "/listarFilmes");
     }
 
     /**

@@ -2,6 +2,7 @@ package com.catalogo.dao;
 
 import com.catalogo.model.Filme;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Contrato de acesso a dados para {@link Filme}.
@@ -19,4 +20,12 @@ public interface FilmeDAO {
      * @throws SQLException se a inserção falhar
      */
     void inserir(Filme filme) throws SQLException;
+
+    /**
+     * Lista todos os filmes cadastrados, ordenados por título.
+     *
+     * @return lista de filmes (vazia, nunca {@code null}, se não houver nenhum cadastrado)
+     * @throws SQLException se a consulta falhar
+     */
+    List<Filme> listarTodos() throws SQLException;
 }

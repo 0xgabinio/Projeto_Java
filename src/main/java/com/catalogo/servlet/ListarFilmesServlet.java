@@ -1,0 +1,52 @@
+package com.catalogo.servlet;
+
+import com.catalogo.dao.FilmeDAO;
+import com.catalogo.dao.FilmeDAOImpl;
+import com.catalogo.model.Filme;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+/**
+ * Controller (Servlet) para a listagem de {@link Filme}s cadastrados.
+ * <p>
+ * Implementa {@code specs/listar-filmes.md}: consulta todos os filmes via {@link FilmeDAO} e
+ * encaminha para {@code listarFilmes.jsp}, sem expor detalhes técnicos ao usuário em caso de
+ * falha (Situação-Problema 2 do PDF do enunciado).
+ */
+@WebServlet("/listarFilmes")
+public class ListarFilmesServlet extends HttpServlet {
+
+    private final FilmeDAO filmeDAO = new FilmeDAOImpl();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Lê e consome a mensagem flash de sucesso (setada por CadastrarFilmeServlet após um
+        // cadastro bem-sucedido) — só aparece uma vez, mesmo se a página for recarregada.
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("mensagemSucesso") != null) {
+            request.setAttribute("mensagemSucesso", session.getAttribute("mensagemSucesso"));
+            session.removeAttribute("mensagemSucesso");
+        }
+
+        try {
+            List<Filme> filmes = filmeDAO.listarTodos();
+            request.setAttribute("filmes", filmes);
+        } catch (SQLException e) {
+            getServletContext().log("Falha ao listar filmes", e);
+            request.setAttribute("erros", List.of(
+                    "Não foi possível carregar a lista de filmes agora. Tente novamente em instantes."));
+        }
+
+        request.getRequestDispatcher("/WEB-INF/jsp/listarFilmes.jsp").forward(request, response);
+    }
+}

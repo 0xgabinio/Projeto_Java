@@ -9,12 +9,10 @@
 <body>
 <h1>Cadastrar Filme</h1>
 
+<p><a href="${pageContext.request.contextPath}/listarFilmes">Ver filmes catalogados</a></p>
+
 <%-- Toda saída de dado que veio do usuário passa por <c:out> — nunca EL cru — para
      prevenir XSS (ver docs/sdd/seguranca/checklist-owasp-top10.md, categoria A03/CWE-79). --%>
-
-<c:if test="${not empty mensagemSucesso}">
-    <p style="color: green;"><c:out value="${mensagemSucesso}"/></p>
-</c:if>
 
 <c:if test="${not empty erros}">
     <ul style="color: red;">
