@@ -1,0 +1,105 @@
+/*
+ * Estilo próprio do Catálogo Simples de Filmes — complementa o Bootstrap 5 (CDN), não o
+ * substitui. Servido pelo próprio WAR (mesma origem, sem SRI necessário).
+ * Ver specs/estilizar-interface.md.
+ */
+
+:root {
+    --catalogo-transicao: 0.2s ease;
+}
+
+body {
+    transition: background-color var(--catalogo-transicao), color var(--catalogo-transicao);
+}
+
+/* Navbar com um leve gradiente para dar identidade própria, mesma cor em claro/escuro. */
+.navbar.bg-dark {
+    background: linear-gradient(90deg, #1a1a2e, #202046) !important;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* Conteúdo principal aparece com um leve fade-in ao carregar a página. */
+main.container {
+    animation: catalogoFadeIn 0.35s ease;
+}
+
+@keyframes catalogoFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cards (resultados de busca TMDB, carrossel) ganham leve elevação ao passar o mouse. */
+.card {
+    transition: transform var(--catalogo-transicao), box-shadow var(--catalogo-transicao);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.03);
+}
+
+/* Botões com uma leve elevação ao passar o mouse (feedback visual, sem exagero). */
+.btn {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Linhas da tabela de filmes com leve destaque ao passar o mouse. */
+.table-hover tbody tr {
+    transition: background-color var(--catalogo-transicao);
+}
+
+/*
+ * Setas do carrossel: os ícones padrão do Bootstrap são brancos e ficam praticamente
+ * invisíveis sobre o fundo claro (bg-light) do carrossel de /descobrirFilmes — por isso
+ * pareciam "não existir". Um fundo circular escuro atrás do ícone garante contraste em
+ * qualquer tema (claro ou escuro) e aumenta a área clicável.
+ */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 8%;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.65);
+    border-radius: 50%;
+    padding: 1.5rem;
+    background-size: 50%;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.carousel-indicators [data-bs-target] {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Botão de alternar modo escuro (ver js/tema.js). */
+#alternarTema {
+    font-size: 1.1rem;
+    line-height: 1;
+}
