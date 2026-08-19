@@ -2,7 +2,8 @@
 ' Diagrama de classes consolidado do Catálogo Simples de Filmes.
 ' Acumulado incrementalmente pela skill modelar-uml a cada spec modelada.
 ' Origem desta versão: specs/cadastrar-filme.md, specs/listar-filmes.md, specs/detalhar-filme.md,
-' specs/editar-filme.md, specs/excluir-filme.md, specs/buscar-filme.md.
+' specs/editar-filme.md, specs/excluir-filme.md, specs/buscar-filme.md,
+' specs/integrar-tmdb.md, specs/estilizar-interface.md.
 
 class Filme {
   -id: int
@@ -11,6 +12,8 @@ class Filme {
   -anoLancamento: int
   -genero: String
   -sinopse: String
+  -capaUrl: String
+  -notaTmdb: Double
   +getId(): int
   +getTitulo(): String
   +setTitulo(titulo: String): void
@@ -22,6 +25,10 @@ class Filme {
   +setGenero(genero: String): void
   +getSinopse(): String
   +setSinopse(sinopse: String): void
+  +getCapaUrl(): String
+  +setCapaUrl(capaUrl: String): void
+  +getNotaTmdb(): Double
+  +setNotaTmdb(notaTmdb: Double): void
 }
 
 interface FilmeDAO {
@@ -41,6 +48,37 @@ class FilmeDAOImpl {
   +atualizar(filme: Filme): void
   +excluir(id: int): void
   +buscarPorTituloOuDiretor(termo: String): List<Filme>
+}
+
+class TmdbFilme {
+  +tmdbId: int
+  +titulo: String
+  +anoLancamento: int
+  +diretor: String
+  +genero: String
+  +sinopse: String
+  +capaUrl: String
+  +notaTmdb: double
+}
+
+class FabricaTmdb {
+  +{static} getApiKey(): String
+  +{static} getBaseUrl(): String
+  +{static} getImageBaseUrl(): String
+}
+
+class TmdbClient {
+  +buscarPorTitulo(termo: String): List<TmdbFilme>
+  +buscarDetalhes(tmdbId: int): TmdbFilme
+  +listarPopulares(): List<TmdbFilme>
+}
+
+class DescobrirFilmesServlet {
+  +doGet(req, resp): void
+}
+
+class ImportarFilmeTmdbServlet {
+  +doPost(req, resp): void
 }
 
 class CadastrarFilmeServlet {
@@ -90,5 +128,11 @@ EditarFilmeServlet --> FilmeDAO : usa
 EditarFilmeServlet --> FilmeValidator : usa
 ExcluirFilmeServlet --> FilmeDAO : usa
 FilmeDAOImpl --> Filme : persiste/retorna/atualiza/exclui
+TmdbClient --> FabricaTmdb : usa
+TmdbClient --> TmdbFilme : retorna
+DescobrirFilmesServlet --> TmdbClient : usa
+ImportarFilmeTmdbServlet --> TmdbClient : usa
+ImportarFilmeTmdbServlet --> FilmeDAO : usa (inserir)
+CadastrarFilmeServlet --> TmdbClient : usa (busca opcional)
 
 @enduml
