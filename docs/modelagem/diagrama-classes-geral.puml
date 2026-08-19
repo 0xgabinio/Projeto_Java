@@ -70,6 +70,17 @@ class FilmeValidator {
   +{static} tratarEntrada(valor: String): String
 }
 
+class CodificacaoUtf8Filter {
+  +doFilter(req, resp, chain): void
+}
+note right of CodificacaoUtf8Filter
+  @WebFilter("/*") — primeiro na cadeia,
+  força UTF-8 em toda requisição/resposta
+  (encontrado testando a aplicação real
+  no Tomcat; Servlet API decodifica
+  parâmetros como ISO-8859-1 por padrão).
+end note
+
 FilmeDAOImpl ..|> FilmeDAO
 CadastrarFilmeServlet --> FilmeDAO : usa
 CadastrarFilmeServlet --> FilmeValidator : usa
