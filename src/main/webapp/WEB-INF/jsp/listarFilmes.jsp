@@ -1,37 +1,36 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Filmes Catalogados — Catálogo Simples de Filmes</title>
-</head>
-<body>
-<h1>Filmes Catalogados</h1>
+<c:set var="pageTitle" value="Filmes Catalogados" scope="request"/>
+<%@ include file="common/header.jspf" %>
 
-<p><a href="${pageContext.request.contextPath}/cadastrarFilme">Cadastrar novo filme</a></p>
+<h1 class="mb-4">Filmes Catalogados</h1>
 
-<%-- Busca por título ou diretor (specs/buscar-filme.md) — GET simples na própria listagem;
-     "termo" é reexibido via <c:out> (previne XSS refletido). --%>
-<form action="${pageContext.request.contextPath}/listarFilmes" method="get">
-    <label for="termo">Buscar por título ou diretor</label><br>
-    <input type="text" id="termo" name="termo" maxlength="255" value="<c:out value="${termo}"/>">
-    <button type="submit">Buscar</button>
-    <c:if test="${not empty termo}">
-        <a href="${pageContext.request.contextPath}/listarFilmes">Limpar busca</a>
-    </c:if>
-</form>
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+    <%-- Busca por título ou diretor (specs/buscar-filme.md) — GET simples na própria listagem;
+         "termo" é reexibido via <c:out> (previne XSS refletido). --%>
+    <form action="${pageContext.request.contextPath}/listarFilmes" method="get" class="d-flex gap-2">
+        <input type="text" name="termo" class="form-control" maxlength="255"
+               value="<c:out value="${termo}"/>" placeholder="Buscar por título ou diretor">
+        <button type="submit" class="btn btn-outline-primary">Buscar</button>
+        <c:if test="${not empty termo}">
+            <a href="${pageContext.request.contextPath}/listarFilmes" class="btn btn-outline-secondary">Limpar</a>
+        </c:if>
+    </form>
+    <a href="${pageContext.request.contextPath}/cadastrarFilme" class="btn btn-primary">Cadastrar novo filme</a>
+</div>
 
 <c:if test="${not empty mensagemSucesso}">
-    <p style="color: green;"><c:out value="${mensagemSucesso}"/></p>
+    <div class="alert alert-success"><c:out value="${mensagemSucesso}"/></div>
 </c:if>
 
 <c:if test="${not empty erros}">
-    <ul style="color: red;">
-        <c:forEach var="erro" items="${erros}">
-            <li><c:out value="${erro}"/></li>
-        </c:forEach>
-    </ul>
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            <c:forEach var="erro" items="${erros}">
+                <li><c:out value="${erro}"/></li>
+            </c:forEach>
+        </ul>
+    </div>
 </c:if>
 
 <c:choose>
@@ -44,31 +43,46 @@
     <c:otherwise>
         <%-- Todos os campos vêm do banco, mas foram inseridos originalmente via formulário de
              cadastro — <c:out> aqui previne XSS persistente/armazenado (CWE-79). --%>
-        <table border="1" cellpadding="4">
-            <thead>
-            <tr>
-                <th>Título</th>
-                <th>Diretor</th>
-                <th>Ano</th>
-                <th>Gênero</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="filme" items="${filmes}">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
                 <tr>
-                    <td><c:out value="${filme.titulo}"/></td>
-                    <td><c:out value="${filme.diretor}"/></td>
-                    <td>${filme.anoLancamento > 0 ? filme.anoLancamento : '—'}</td>
-                    <td><c:out value="${filme.genero}"/></td>
-                    <td>
-                        <a href="${pageContext.request.contextPath}/detalharFilme?id=${filme.id}">Ver detalhes</a>
-                    </td>
+                    <th>Pôster</th>
+                    <th>Título</th>
+                    <th>Diretor</th>
+                    <th>Ano</th>
+                    <th>Gênero</th>
+                    <th>Nota TMDB</th>
+                    <th></th>
                 </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                <c:forEach var="filme" items="${filmes}">
+                    <tr>
+                        <td>
+                            <c:if test="${not empty filme.capaUrl}">
+                                <img src="<c:out value="${filme.capaUrl}"/>" alt="Pôster" class="rounded" style="width:48px;">
+                            </c:if>
+                        </td>
+                        <td><c:out value="${filme.titulo}"/></td>
+                        <td><c:out value="${filme.diretor}"/></td>
+                        <td>${filme.anoLancamento > 0 ? filme.anoLancamento : '—'}</td>
+                        <td><c:out value="${filme.genero}"/></td>
+                        <td>
+                            <c:if test="${not empty filme.notaTmdb}">
+                                <span class="badge text-bg-warning">${filme.notaTmdb}/10</span>
+                            </c:if>
+                        </td>
+                        <td>
+                            <a href="${pageContext.request.contextPath}/detalharFilme?id=${filme.id}"
+                               class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
     </c:otherwise>
 </c:choose>
-</body>
-</html>
+
+<%@ include file="common/footer.jspf" %>
