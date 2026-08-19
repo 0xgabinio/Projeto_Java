@@ -85,7 +85,13 @@ public class TmdbClient {
 
         JSONArray generos = detalhes.optJSONArray("genres");
         if (generos != null && !generos.isEmpty()) {
-            filme.setGenero(generos.getJSONObject(0).optString("name", null));
+            // optJSONObject (não getJSONObject) — resposta com formato inesperado não deve
+            // lançar JSONException não-tratada aqui fora do guarda-chuva de requisitarJson()
+            // (Situação-Problema 2 do PDF: nenhuma exceção deve escapar sem tratamento).
+            JSONObject primeiroGenero = generos.optJSONObject(0);
+            if (primeiroGenero != null) {
+                filme.setGenero(primeiroGenero.optString("name", null));
+            }
         }
 
         filme.setDiretor(buscarDiretor(tmdbId));
@@ -105,8 +111,10 @@ public class TmdbClient {
         }
 
         for (int i = 0; i < equipe.length(); i++) {
-            JSONObject membro = equipe.getJSONObject(i);
-            if ("Director".equals(membro.optString("job"))) {
+            // optJSONObject (não getJSONObject) — mesmo motivo do gênero acima: um item
+            // inesperado na lista de créditos não pode lançar JSONException não-tratada.
+            JSONObject membro = equipe.optJSONObject(i);
+            if (membro != null && "Director".equals(membro.optString("job"))) {
                 return membro.optString("name", null);
             }
         }
