@@ -32,6 +32,21 @@ public final class FabricaDeConexoes {
         } catch (IOException e) {
             throw new IllegalStateException("Falha ao carregar db.properties", e);
         }
+
+        // Força o registro do driver JDBC explicitamente. Necessário em alguns servidores de
+        // aplicação (ex.: Tomcat): quando o driver vem empacotado em WEB-INF/lib, o
+        // DriverManager pode não descobri-lo automaticamente via ServiceLoader, porque sua
+        // inicialização estática ocorre com o classloader comum do servidor, não com o
+        // classloader da webapp — resultando em "No suitable driver found" mesmo com o JAR
+        // presente. Chamar Class.forName aqui, com o classloader desta classe, garante que o
+        // driver se registre (seu construtor estático chama DriverManager.registerDriver()).
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(
+                    "Driver JDBC do MySQL (com.mysql.cj.jdbc.Driver) não encontrado no "
+                            + "classpath. Confirme a dependência mysql-connector-j no pom.xml.", e);
+        }
     }
 
     private FabricaDeConexoes() {
