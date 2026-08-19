@@ -4,6 +4,10 @@ import com.catalogo.dao.FilmeDAO;
 import com.catalogo.dao.FilmeDAOImpl;
 import com.catalogo.model.Filme;
 import com.catalogo.service.FilmeValidator;
+import com.catalogo.tmdb.FabricaTmdb;
+import com.catalogo.tmdb.TmdbClient;
+import com.catalogo.tmdb.TmdbException;
+import com.catalogo.tmdb.TmdbFilme;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,16 +26,67 @@ import java.util.List;
  * ({@code cadastroFilme.jsp}), valida (via {@link FilmeValidator}) antes de persistir, delega
  * a inserção ao {@link FilmeDAO} e nunca expõe detalhes técnicos (stack trace, SQL) ao
  * usuário final — Situação-Problema 2 do PDF do enunciado.
+ * <p>
+ * Também implementa {@code specs/integrar-tmdb.md} (RF-03/RF-04): {@code doGet} aceita os
+ * parâmetros opcionais {@code buscaTmdb} (mostra até 5 resultados de busca por título) e
+ * {@code tmdbId} (pré-preenche o formulário com os detalhes do filme escolhido) — ambos
+ * falham de forma graciosa se o TMDB estiver indisponível (RF-07), sem afetar o cadastro
+ * manual normal.
  */
 @WebServlet("/cadastrarFilme")
 public class CadastrarFilmeServlet extends HttpServlet {
 
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
+    private final TmdbClient tmdbClient = new TmdbClient();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        String tmdbIdParam = request.getParameter("tmdbId");
+        String buscaTmdb = FilmeValidator.tratarEntrada(request.getParameter("buscaTmdb"));
+
+        if (tmdbIdParam != null && FabricaTmdb.isConfigurado()) {
+            preencherFormularioComTmdb(request, tmdbIdParam);
+        } else if (buscaTmdb != null && FabricaTmdb.isConfigurado()) {
+            buscarNoTmdb(request, buscaTmdb);
+        }
+
+        request.setAttribute("tmdbConfigurado", FabricaTmdb.isConfigurado());
         request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
+    }
+
+    /** Busca até 5 filmes por título no TMDB e disponibiliza os resultados para a JSP. */
+    private void buscarNoTmdb(HttpServletRequest request, String termo) {
+        request.setAttribute("buscaTmdb", termo);
+        try {
+            List<TmdbFilme> resultados = tmdbClient.buscarPorTitulo(termo);
+            request.setAttribute("resultadosTmdb", resultados);
+        } catch (TmdbException e) {
+            getServletContext().log("Falha ao buscar '" + termo + "' no TMDB", e);
+            request.setAttribute("erros", List.of(
+                    "Não foi possível buscar no TMDB agora. Você ainda pode cadastrar manualmente."));
+        }
+    }
+
+    /** Pré-preenche os campos do formulário com os detalhes de um filme do TMDB. */
+    private void preencherFormularioComTmdb(HttpServletRequest request, String tmdbIdParam) {
+        try {
+            int tmdbId = Integer.parseInt(tmdbIdParam.trim());
+            TmdbFilme tmdbFilme = tmdbClient.buscarDetalhes(tmdbId);
+
+            request.setAttribute("titulo", tmdbFilme.getTitulo());
+            request.setAttribute("diretor", tmdbFilme.getDiretor());
+            request.setAttribute("anoLancamento",
+                    tmdbFilme.getAnoLancamento() > 0 ? String.valueOf(tmdbFilme.getAnoLancamento()) : null);
+            request.setAttribute("genero", tmdbFilme.getGenero());
+            request.setAttribute("sinopse", tmdbFilme.getSinopse());
+            request.setAttribute("capaUrl", tmdbFilme.getCapaUrl());
+        } catch (NumberFormatException | TmdbException e) {
+            getServletContext().log("Falha ao pré-preencher formulário a partir do TMDB", e);
+            request.setAttribute("erros", List.of(
+                    "Não foi possível carregar os detalhes deste filme do TMDB. Preencha manualmente."));
+        }
     }
 
     @Override
@@ -43,8 +98,9 @@ public class CadastrarFilmeServlet extends HttpServlet {
         String anoLancamentoStr = FilmeValidator.tratarEntrada(request.getParameter("anoLancamento"));
         String genero = FilmeValidator.tratarEntrada(request.getParameter("genero"));
         String sinopse = FilmeValidator.tratarEntrada(request.getParameter("sinopse"));
+        String capaUrl = FilmeValidator.tratarEntrada(request.getParameter("capaUrl"));
 
-        List<String> erros = FilmeValidator.validar(titulo, diretor, anoLancamentoStr, genero);
+        List<String> erros = FilmeValidator.validar(titulo, diretor, anoLancamentoStr, genero, capaUrl);
 
         // Reexibe os valores preenchidos em caso de erro, para o usuário não perder o que digitou.
         request.setAttribute("titulo", titulo);
@@ -52,6 +108,7 @@ public class CadastrarFilmeServlet extends HttpServlet {
         request.setAttribute("anoLancamento", anoLancamentoStr);
         request.setAttribute("genero", genero);
         request.setAttribute("sinopse", sinopse);
+        request.setAttribute("capaUrl", capaUrl);
 
         if (!erros.isEmpty()) {
             request.setAttribute("erros", erros);
@@ -65,6 +122,7 @@ public class CadastrarFilmeServlet extends HttpServlet {
         filme.setAnoLancamento(anoLancamentoStr == null ? 0 : Integer.parseInt(anoLancamentoStr));
         filme.setGenero(genero);
         filme.setSinopse(sinopse);
+        filme.setCapaUrl(capaUrl);
 
         try {
             filmeDAO.inserir(filme);

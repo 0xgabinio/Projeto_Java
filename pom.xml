@@ -50,6 +50,15 @@
             <version>8.3.0</version>
         </dependency>
 
+        <!-- Parsing JSON mínimo para consumir a API do TMDB (ver specs/integrar-tmdb.md).
+             Chamadas HTTP em si usam java.net.http.HttpClient (JDK 11+, sem dependência
+             extra) — só o parsing da resposta JSON precisa de uma biblioteca. -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
+
         <!-- Testes -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
