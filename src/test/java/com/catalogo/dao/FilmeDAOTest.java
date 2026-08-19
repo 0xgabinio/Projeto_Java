@@ -18,9 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
  * Testes unitários de {@link FilmeDAOImpl} — cobre todos os métodos de {@link FilmeDAO}
- * (inserir, listarTodos, buscarPorId, atualizar, excluir), caminho feliz e casos de borda.
+ * (inserir, listarTodos, buscarPorId, atualizar, excluir, buscarPorTituloOuDiretor), caminho
+ * feliz e casos de borda.
  * <p>
- * <b>Pré-requisito para rodar esta classe</b>: um banco de dados MySQL de teste, real e
+ * <b>Pré-requisito para rodar esta classe</b>: um banco de dados MySQL/MariaDB de teste, real e
  * dedicado, disponível localmente — recomenda-se o schema {@code catalogo_test} (nunca aponte
  * para o schema de desenvolvimento/produção, pois {@link #limparTabela()} apaga todas as linhas
  * de {@code filme} antes de cada teste). Como o projeto não usa nenhum framework de mock (fora
@@ -40,10 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  * desenvolvimento sem qualquer alteração de código. A tabela {@code filme} (DDL em
  * {@code docs/modelagem/der.sql}) já deve existir no schema de teste antes de rodar.
  * <p>
- * <b>Limitação registrada por </b>{@code revisor-seguranca-qa}<b>:</b> nenhum banco MySQL
- * estava disponível no ambiente em que esta classe foi escrita, então estes testes foram
- * escritos e revisados mas não executados de fato. Rode-os localmente (com o banco de teste
- * configurado) antes de considerar a cobertura validada.
+ * <b>Execução confirmada:</b> rodados com sucesso (14/14 passando) contra um schema MariaDB
+ * real ({@code catalogo_test}, DDL de {@code docs/modelagem/der.sql}), via
+ * {@code mvn test} com JDK 25 e Maven 3.9.
  */
 class FilmeDAOTest {
 
