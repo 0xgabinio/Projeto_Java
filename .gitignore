@@ -48,11 +48,12 @@ desktop.ini
 *.log
 logs/
 
-### Segredos e configuração local (JDBC/DB) ###
-# Nunca versionar credenciais reais de banco de dados — ver trilha de segurança
+### Segredos e configuração local (JDBC/DB, chaves de API externas) ###
+# Nunca versionar credenciais/chaves reais — ver trilha de segurança
 # (docs/sdd/seguranca/checklist-owasp-top10.md, categoria A02/CWE-259/CWE-798).
-# Mantenha um "db.properties.example" versionado como modelo, sem credenciais reais.
+# Mantenha um "*.properties.example" versionado como modelo, sem credenciais/chaves reais.
 db.properties
+tmdb.properties
 application-local.properties
 .env
 .env.*
