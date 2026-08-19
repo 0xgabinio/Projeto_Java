@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  * Configuração: crie um {@code src/test/resources/db.properties} local (nunca versionado — ver
  * {@code .gitignore}) apontando para o schema de teste, por exemplo:
  * <pre>
- * db.url=jdbc:mysql://localhost:3306/catalogo_test?useSSL=false&amp;serverTimezone=UTC
+ * db.url=jdbc:mysql://localhost:3306/catalogo_test?useSSL=false&amp;serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=UTF-8
  * db.usuario=SEU_USUARIO_AQUI
  * db.senha=SUA_SENHA_AQUI
  * </pre>

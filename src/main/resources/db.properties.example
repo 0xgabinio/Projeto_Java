@@ -4,6 +4,6 @@
 # credenciais locais. "db.properties" nunca é versionado (ver .gitignore) — nunca commitar
 # credenciais reais aqui ou em qualquer outro arquivo rastreado pelo git.
 
-db.url=jdbc:mysql://localhost:3306/catalogo?useSSL=false&serverTimezone=UTC
+db.url=jdbc:mysql://localhost:3306/catalogo?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
 db.usuario=SEU_USUARIO_AQUI
 db.senha=SUA_SENHA_AQUI
