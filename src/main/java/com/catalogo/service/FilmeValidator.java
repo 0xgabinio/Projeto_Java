@@ -14,6 +14,7 @@ public final class FilmeValidator {
     private static final int TITULO_MAX = 255;
     private static final int DIRETOR_MAX = 255;
     private static final int GENERO_MAX = 100;
+    private static final int CAPA_URL_MAX = 500;
 
     private FilmeValidator() {
     }
@@ -26,9 +27,12 @@ public final class FilmeValidator {
      * @param diretor          diretor já tratado, pode ser {@code null}
      * @param anoLancamentoStr ano de lançamento como string já tratada, pode ser {@code null}
      * @param genero           gênero já tratado, pode ser {@code null}
+     * @param capaUrl          URL do pôster já tratada, pode ser {@code null} (ver
+     *                         {@code specs/integrar-tmdb.md})
      * @return lista de mensagens de erro (vazia se os dados forem válidos)
      */
-    public static List<String> validar(String titulo, String diretor, String anoLancamentoStr, String genero) {
+    public static List<String> validar(String titulo, String diretor, String anoLancamentoStr,
+                                        String genero, String capaUrl) {
         List<String> erros = new ArrayList<>();
 
         if (titulo == null) {
@@ -43,6 +47,10 @@ public final class FilmeValidator {
 
         if (genero != null && genero.length() > GENERO_MAX) {
             erros.add("Gênero deve ter no máximo " + GENERO_MAX + " caracteres.");
+        }
+
+        if (capaUrl != null && capaUrl.length() > CAPA_URL_MAX) {
+            erros.add("A URL do pôster deve ter no máximo " + CAPA_URL_MAX + " caracteres.");
         }
 
         if (anoLancamentoStr != null) {

@@ -20,26 +20,28 @@ import java.util.List;
 public class FilmeDAOImpl implements FilmeDAO {
 
     private static final String SQL_INSERIR =
-            "INSERT INTO filme (titulo, diretor, ano_lancamento, genero, sinopse) "
-                    + "VALUES (?, ?, ?, ?, ?)";
+            "INSERT INTO filme (titulo, diretor, ano_lancamento, genero, sinopse, capa_url, nota_tmdb) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_LISTAR_TODOS =
-            "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse FROM filme ORDER BY titulo";
+            "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse, capa_url, nota_tmdb "
+                    + "FROM filme ORDER BY titulo";
 
     private static final String SQL_BUSCAR_POR_ID =
-            "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse FROM filme WHERE id = ?";
+            "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse, capa_url, nota_tmdb "
+                    + "FROM filme WHERE id = ?";
 
     private static final String SQL_ATUALIZAR =
-            "UPDATE filme SET titulo = ?, diretor = ?, ano_lancamento = ?, genero = ?, sinopse = ? "
-                    + "WHERE id = ?";
+            "UPDATE filme SET titulo = ?, diretor = ?, ano_lancamento = ?, genero = ?, sinopse = ?, "
+                    + "capa_url = ?, nota_tmdb = ? WHERE id = ?";
 
     private static final String SQL_EXCLUIR = "DELETE FROM filme WHERE id = ?";
 
     // Situação-Problema 1 do PDF: LIKE via PreparedStatement, "%termo%" passado como
     // parâmetro — nunca concatenar o termo de busca diretamente na string SQL.
     private static final String SQL_BUSCAR_POR_TITULO_OU_DIRETOR =
-            "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse FROM filme "
-                    + "WHERE titulo LIKE ? OR diretor LIKE ? ORDER BY titulo";
+            "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse, capa_url, nota_tmdb "
+                    + "FROM filme WHERE titulo LIKE ? OR diretor LIKE ? ORDER BY titulo";
 
     @Override
     public void inserir(Filme filme) throws SQLException {
@@ -57,6 +59,13 @@ public class FilmeDAOImpl implements FilmeDAO {
 
             stmt.setString(4, filme.getGenero());
             stmt.setString(5, filme.getSinopse());
+            stmt.setString(6, filme.getCapaUrl());
+
+            if (filme.getNotaTmdb() != null) {
+                stmt.setDouble(7, filme.getNotaTmdb());
+            } else {
+                stmt.setNull(7, Types.DECIMAL);
+            }
 
             stmt.executeUpdate();
 
@@ -113,7 +122,15 @@ public class FilmeDAOImpl implements FilmeDAO {
 
             stmt.setString(4, filme.getGenero());
             stmt.setString(5, filme.getSinopse());
-            stmt.setInt(6, filme.getId());
+            stmt.setString(6, filme.getCapaUrl());
+
+            if (filme.getNotaTmdb() != null) {
+                stmt.setDouble(7, filme.getNotaTmdb());
+            } else {
+                stmt.setNull(7, Types.DECIMAL);
+            }
+
+            stmt.setInt(8, filme.getId());
 
             stmt.executeUpdate();
         }
@@ -159,6 +176,11 @@ public class FilmeDAOImpl implements FilmeDAO {
         filme.setAnoLancamento(rs.getInt("ano_lancamento"));
         filme.setGenero(rs.getString("genero"));
         filme.setSinopse(rs.getString("sinopse"));
+        filme.setCapaUrl(rs.getString("capa_url"));
+
+        double notaTmdb = rs.getDouble("nota_tmdb");
+        filme.setNotaTmdb(rs.wasNull() ? null : notaTmdb);
+
         return filme;
     }
 }

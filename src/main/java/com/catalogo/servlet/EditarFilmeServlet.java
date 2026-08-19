@@ -44,6 +44,11 @@ public class EditarFilmeServlet extends HttpServlet {
                     filme.getAnoLancamento() > 0 ? String.valueOf(filme.getAnoLancamento()) : null);
             request.setAttribute("genero", filme.getGenero());
             request.setAttribute("sinopse", filme.getSinopse());
+            request.setAttribute("capaUrl", filme.getCapaUrl());
+            // notaTmdb não tem campo editável no formulário — é preservada via campo oculto
+            // (ver editarFilme.jsp) para não ser apagada por uma edição manual (ver
+            // specs/integrar-tmdb.md).
+            request.setAttribute("notaTmdb", filme.getNotaTmdb());
         }
 
         request.getRequestDispatcher("/WEB-INF/jsp/editarFilme.jsp").forward(request, response);
@@ -65,8 +70,12 @@ public class EditarFilmeServlet extends HttpServlet {
         String anoLancamentoStr = FilmeValidator.tratarEntrada(request.getParameter("anoLancamento"));
         String genero = FilmeValidator.tratarEntrada(request.getParameter("genero"));
         String sinopse = FilmeValidator.tratarEntrada(request.getParameter("sinopse"));
+        String capaUrl = FilmeValidator.tratarEntrada(request.getParameter("capaUrl"));
+        // Round-trip de notaTmdb via campo oculto do formulário (ver editarFilme.jsp) — não é
+        // editável pelo usuário, só precisa sobreviver à edição sem ser apagada.
+        Double notaTmdb = tratarNotaTmdb(request.getParameter("notaTmdb"));
 
-        List<String> erros = FilmeValidator.validar(titulo, diretor, anoLancamentoStr, genero);
+        List<String> erros = FilmeValidator.validar(titulo, diretor, anoLancamentoStr, genero, capaUrl);
 
         request.setAttribute("id", id);
         request.setAttribute("titulo", titulo);
@@ -74,6 +83,8 @@ public class EditarFilmeServlet extends HttpServlet {
         request.setAttribute("anoLancamento", anoLancamentoStr);
         request.setAttribute("genero", genero);
         request.setAttribute("sinopse", sinopse);
+        request.setAttribute("capaUrl", capaUrl);
+        request.setAttribute("notaTmdb", notaTmdb);
 
         if (!erros.isEmpty()) {
             request.setAttribute("erros", erros);
@@ -88,6 +99,8 @@ public class EditarFilmeServlet extends HttpServlet {
         filme.setAnoLancamento(anoLancamentoStr == null ? 0 : Integer.parseInt(anoLancamentoStr));
         filme.setGenero(genero);
         filme.setSinopse(sinopse);
+        filme.setCapaUrl(capaUrl);
+        filme.setNotaTmdb(notaTmdb);
 
         try {
             filmeDAO.atualizar(filme);
@@ -117,6 +130,19 @@ public class EditarFilmeServlet extends HttpServlet {
             getServletContext().log("Falha ao buscar filme id=" + id + " para edição", e);
             request.setAttribute("erros", List.of(
                     "Não foi possível carregar o filme agora. Tente novamente em instantes."));
+            return null;
+        }
+    }
+
+    /** Converte o campo oculto {@code notaTmdb}, retornando {@code null} se ausente/inválido. */
+    private Double tratarNotaTmdb(String notaTmdbParam) {
+        String tratado = FilmeValidator.tratarEntrada(notaTmdbParam);
+        if (tratado == null) {
+            return null;
+        }
+        try {
+            return Double.parseDouble(tratado);
+        } catch (NumberFormatException e) {
             return null;
         }
     }
