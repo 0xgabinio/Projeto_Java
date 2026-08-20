@@ -26,6 +26,16 @@ public class DetalharFilmeServlet extends HttpServlet {
 
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
 
+    /**
+     * Exibe os detalhes completos de um filme, dado o parâmetro {@code id}. Se {@code id} for
+     * ausente, não-numérico ou não corresponder a nenhum filme, encaminha para a mesma JSP com
+     * {@code naoEncontrado=true} (RF-03 de {@code specs/detalhar-filme.md}), nunca um erro
+     * técnico.
+     *
+     * @param request  requisição HTTP; parâmetro obrigatório {@code id} (chave primária do
+     *                 filme)
+     * @param response resposta HTTP, usada para encaminhar (forward) a {@code detalheFilme.jsp}
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

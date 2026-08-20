@@ -40,6 +40,15 @@ public class CadastrarFilmeServlet extends HttpServlet {
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
     private final TmdbClient tmdbClient = new TmdbClient();
 
+    /**
+     * Exibe o formulário de cadastro em branco, ou pré-preenchido/com resultados de busca do
+     * TMDB quando os parâmetros opcionais {@code tmdbId}/{@code buscaTmdb} são informados
+     * (RF-03/RF-04 de {@code specs/integrar-tmdb.md}).
+     *
+     * @param request  requisição HTTP; parâmetros opcionais {@code tmdbId} (id do filme no TMDB
+     *                 a pré-preencher) e {@code buscaTmdb} (termo de busca por título no TMDB)
+     * @param response resposta HTTP, usada para encaminhar (forward) a {@code cadastroFilme.jsp}
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -90,6 +99,19 @@ public class CadastrarFilmeServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Recebe a submissão do formulário de cadastro, valida os campos (via
+     * {@link FilmeValidator}), checa duplicidade (mesmo título + ano já cadastrado) e, se tudo
+     * estiver correto, insere o novo {@link Filme} via {@link FilmeDAO} e redireciona para
+     * {@code /listarFilmes} com mensagem de sucesso. Em caso de erro de validação ou falha de
+     * persistência, reexibe o formulário com os valores já preenchidos e uma mensagem amigável
+     * (nunca stack trace — Situação-Problema 2 do PDF).
+     *
+     * @param request  requisição HTTP com os parâmetros do formulário ({@code titulo},
+     *                 {@code diretor}, {@code anoLancamento}, {@code genero}, {@code sinopse},
+     *                 {@code capaUrl})
+     * @param response resposta HTTP, usada para redirecionar em caso de sucesso
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -27,6 +27,16 @@ public class EditarFilmeServlet extends HttpServlet {
 
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
 
+    /**
+     * Exibe o formulário de edição pré-preenchido com os dados atuais do filme, dado o
+     * parâmetro {@code id} (RF-01 de {@code specs/editar-filme.md}). {@code id}
+     * ausente/inválido ou inexistente resulta em {@code naoEncontrado=true}, nunca um erro
+     * técnico.
+     *
+     * @param request  requisição HTTP; parâmetro obrigatório {@code id} (chave primária do
+     *                 filme a editar)
+     * @param response resposta HTTP, usada para encaminhar (forward) a {@code editarFilme.jsp}
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -54,6 +64,18 @@ public class EditarFilmeServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/jsp/editarFilme.jsp").forward(request, response);
     }
 
+    /**
+     * Recebe a submissão do formulário de edição, valida os campos (mesma lógica do cadastro,
+     * via {@link FilmeValidator}) e, se válidos, atualiza o {@link Filme} via {@link FilmeDAO} e
+     * redireciona para {@code /detalharFilme?id=N} com mensagem de sucesso (RF-04/RF-05 de
+     * {@code specs/editar-filme.md}). Em caso de erro de validação ou falha de persistência,
+     * reexibe o formulário preenchido com uma mensagem amigável (nunca stack trace).
+     *
+     * @param request  requisição HTTP com {@code id} e os parâmetros do formulário
+     *                 ({@code titulo}, {@code diretor}, {@code anoLancamento}, {@code genero},
+     *                 {@code sinopse}, {@code capaUrl}, {@code notaTmdb})
+     * @param response resposta HTTP, usada para redirecionar em caso de sucesso
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -29,6 +29,14 @@ public class CodificacaoUtf8Filter implements Filter {
         // Sem configuração necessária.
     }
 
+    /**
+     * Força UTF-8 na requisição e na resposta antes de repassar para o restante da cadeia de
+     * filtros/Servlets.
+     *
+     * @param request  requisição a ter a codificação de caracteres ajustada
+     * @param response resposta a ter a codificação de caracteres ajustada
+     * @param chain    cadeia de filtros a continuar após o ajuste
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {

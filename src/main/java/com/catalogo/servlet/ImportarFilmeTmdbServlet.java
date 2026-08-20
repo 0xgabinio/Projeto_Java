@@ -38,6 +38,18 @@ public class ImportarFilmeTmdbServlet extends HttpServlet {
     private final TmdbClient tmdbClient = new TmdbClient();
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
 
+    /**
+     * Importa o filme identificado por {@code tmdbId} do TMDB para o catálogo local: busca os
+     * detalhes completos, valida, checa duplicidade e insere via {@link FilmeDAO}, redirecionando
+     * para {@code /listarFilmes} com mensagem de sucesso (RF-02 de
+     * {@code specs/integrar-tmdb.md}). Qualquer falha (TMDB indisponível, dados inválidos,
+     * duplicidade ou erro de persistência) redireciona para {@code /descobrirFilmes} com
+     * mensagem amigável, nunca um erro técnico.
+     *
+     * @param request  requisição HTTP; parâmetro obrigatório {@code tmdbId} (id do filme no
+     *                 TMDB a importar)
+     * @param response resposta HTTP, usada para redirecionar em qualquer desfecho
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

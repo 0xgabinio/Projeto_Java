@@ -58,6 +58,14 @@ public class CabecalhosSegurancaFilter implements Filter {
         // Sem configuração necessária.
     }
 
+    /**
+     * Adiciona os cabeçalhos de segurança listados na documentação da classe a toda resposta
+     * HTTP, antes de repassar para o restante da cadeia de filtros/Servlets.
+     *
+     * @param request  requisição recebida (repassada sem alteração)
+     * @param response resposta a receber os cabeçalhos de segurança, quando for HTTP
+     * @param chain    cadeia de filtros a continuar após adicionar os cabeçalhos
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {

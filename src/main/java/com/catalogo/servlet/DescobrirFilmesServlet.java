@@ -27,6 +27,16 @@ public class DescobrirFilmesServlet extends HttpServlet {
 
     private final TmdbClient tmdbClient = new TmdbClient();
 
+    /**
+     * Exibe o carrossel de filmes populares do TMDB (RF-01 de
+     * {@code specs/integrar-tmdb.md}). Se o TMDB não estiver configurado ou a chamada falhar,
+     * encaminha com {@code tmdbIndisponivel=true} e mensagem amigável, sem afetar o restante da
+     * aplicação (RF-07).
+     *
+     * @param request  requisição HTTP (sem parâmetros próprios)
+     * @param response resposta HTTP, usada para encaminhar (forward) a
+     *                 {@code descobrirFilmes.jsp}
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

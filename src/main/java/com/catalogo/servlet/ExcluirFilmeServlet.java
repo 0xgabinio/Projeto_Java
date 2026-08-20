@@ -26,6 +26,18 @@ public class ExcluirFilmeServlet extends HttpServlet {
 
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
 
+    /**
+     * Exclui o filme identificado por {@code id} e redireciona para {@code /listarFilmes} com
+     * mensagem de sucesso (RF-01/RF-04 de {@code specs/excluir-filme.md}). {@code id}
+     * ausente/inválido ou falha de banco resultam em redirecionamento com mensagem de erro
+     * amigável (via flash message na sessão), nunca um erro técnico. Só aceita {@code POST} —
+     * não há {@code doGet} nesta classe, então uma requisição {@code GET} é rejeitada pelo
+     * próprio container com 405 (RF-02).
+     *
+     * @param request  requisição HTTP; parâmetro obrigatório {@code id} (chave primária do
+     *                 filme a excluir)
+     * @param response resposta HTTP, usada para redirecionar para {@code /listarFilmes}
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

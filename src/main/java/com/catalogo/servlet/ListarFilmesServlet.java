@@ -28,6 +28,16 @@ public class ListarFilmesServlet extends HttpServlet {
 
     private final FilmeDAO filmeDAO = new FilmeDAOImpl();
 
+    /**
+     * Exibe a listagem completa de filmes, ou apenas os filmes cujo título/diretor correspondem
+     * ao parâmetro opcional {@code termo} (RF-02 de {@code specs/buscar-filme.md}). Também
+     * consome as mensagens flash de sucesso/erro gravadas na sessão por outros Servlets (ex.:
+     * {@code CadastrarFilmeServlet}, {@code ExcluirFilmeServlet}).
+     *
+     * @param request  requisição HTTP; parâmetro opcional {@code termo} (busca por
+     *                 título/diretor, case-insensitive)
+     * @param response resposta HTTP, usada para encaminhar (forward) a {@code listarFilmes.jsp}
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
