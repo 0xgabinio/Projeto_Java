@@ -134,17 +134,25 @@ public class EditarFilmeServlet extends HttpServlet {
         }
     }
 
-    /** Converte o campo oculto {@code notaTmdb}, retornando {@code null} se ausente/inválido. */
+    /**
+     * Converte o campo oculto {@code notaTmdb}, retornando {@code null} se ausente, inválido
+     * ou fora da faixa 0–10 usada pelo TMDB — não é um dado editável pelo usuário (só
+     * "sobrevive" à edição via round-trip, ver {@link #doGet}), então um valor fora da faixa só
+     * pode vir de um formulário adulterado; nesse caso a nota é descartada (mesmo tratamento
+     * dado a um valor não numérico) em vez de persistida.
+     */
     private Double tratarNotaTmdb(String notaTmdbParam) {
         String tratado = FilmeValidator.tratarEntrada(notaTmdbParam);
         if (tratado == null) {
             return null;
         }
+        double nota;
         try {
-            return Double.parseDouble(tratado);
+            nota = Double.parseDouble(tratado);
         } catch (NumberFormatException e) {
             return null;
         }
+        return (nota >= 0 && nota <= 10) ? nota : null;
     }
 
     /** Converte o parâmetro {@code id} em inteiro, retornando {@code null} se ausente/inválido. */
