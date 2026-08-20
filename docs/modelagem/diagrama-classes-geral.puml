@@ -38,6 +38,7 @@ interface FilmeDAO {
   +atualizar(filme: Filme): void
   +excluir(id: int): void
   +buscarPorTituloOuDiretor(termo: String): List<Filme>
+  +existeComTituloEAno(titulo: String, anoLancamento: int): boolean
 }
 
 class FilmeDAOImpl {
@@ -48,6 +49,11 @@ class FilmeDAOImpl {
   +atualizar(filme: Filme): void
   +excluir(id: int): void
   +buscarPorTituloOuDiretor(termo: String): List<Filme>
+  +existeComTituloEAno(titulo: String, anoLancamento: int): boolean
+}
+
+class FabricaDeConexoes {
+  +{static} getConexao(): Connection
 }
 
 class TmdbFilme {
@@ -62,10 +68,21 @@ class TmdbFilme {
 }
 
 class FabricaTmdb {
+  +{static} isConfigurado(): boolean
   +{static} getApiKey(): String
   +{static} getBaseUrl(): String
   +{static} getImageBaseUrl(): String
 }
+
+class TmdbException {
+}
+note right of TmdbException
+  Exceção verificada única da camada
+  com.catalogo.tmdb (rede, timeout, HTTP
+  de erro, JSON malformado) — Servlets
+  capturam só este tipo, nunca expõem a
+  causa técnica ao usuário final.
+end note
 
 class TmdbClient {
   +buscarPorTitulo(termo: String): List<TmdbFilme>
@@ -119,7 +136,19 @@ note right of CodificacaoUtf8Filter
   parâmetros como ISO-8859-1 por padrão).
 end note
 
+class CabecalhosSegurancaFilter {
+  +doFilter(req, resp, chain): void
+}
+note right of CabecalhosSegurancaFilter
+  @WebFilter("/*") — adiciona X-Frame-Options,
+  X-Content-Type-Options, Content-Security-Policy
+  e Referrer-Policy a toda resposta HTTP
+  (achado headers-seguranca-ausentes do
+  pentest blackbox, A05:2021, corrigido).
+end note
+
 FilmeDAOImpl ..|> FilmeDAO
+FilmeDAOImpl --> FabricaDeConexoes : usa
 CadastrarFilmeServlet --> FilmeDAO : usa
 CadastrarFilmeServlet --> FilmeValidator : usa
 ListarFilmesServlet --> FilmeDAO : usa
@@ -130,9 +159,11 @@ ExcluirFilmeServlet --> FilmeDAO : usa
 FilmeDAOImpl --> Filme : persiste/retorna/atualiza/exclui
 TmdbClient --> FabricaTmdb : usa
 TmdbClient --> TmdbFilme : retorna
+TmdbClient ..> TmdbException : lança
 DescobrirFilmesServlet --> TmdbClient : usa
 ImportarFilmeTmdbServlet --> TmdbClient : usa
 ImportarFilmeTmdbServlet --> FilmeDAO : usa (inserir)
+ImportarFilmeTmdbServlet --> FilmeValidator : usa
 CadastrarFilmeServlet --> TmdbClient : usa (busca opcional)
 
 @enduml
