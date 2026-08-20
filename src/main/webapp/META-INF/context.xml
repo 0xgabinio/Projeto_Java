@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Contexto por aplicação, empacotado dentro do próprio WAR (Tomcat carrega este arquivo
+    automaticamente ao implantar o contexto — nenhuma edição manual em `$CATALINA_HOME/conf` é
+    necessária, então nada aqui depende de caminho ou instalação específica de Tomcat).
+
+    Único propósito no momento: configurar o atributo `SameSite=Lax` no cookie de sessão
+    (JSESSIONID). A API Servlet 4.0 (`javax.servlet.http.Cookie`, usada neste projeto) não expõe
+    esse atributo, e o cookie de sessão é criado internamente pelo container antes de qualquer
+    `Filter` da aplicação conseguir interceptá-lo — por isso a configuração precisa acontecer no
+    nível do `CookieProcessor` do Tomcat, e não em código Java.
+
+    `Rfc6265CookieProcessor` com `sameSiteCookies="lax"` é suportado desde o Tomcat 8.5.42 / 9.0.20
+    (este projeto roda em Tomcat 9.0.121). "Lax" foi escolhido (em vez de "Strict") para não
+    quebrar navegação vinda de links externos (ex.: TMDB) que dependam da sessão existente.
+
+    Referência: achado `headers-seguranca-ausentes` (security/reports/), item "Cookie de sessão
+    sem atributo SameSite explícito".
+-->
+<Context>
+    <CookieProcessor
+        className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
+        sameSiteCookies="lax" />
+</Context>
