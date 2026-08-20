@@ -1,0 +1,17 @@
+# Template de configuração da integração com o TMDB (The Movie Database).
+#
+# Copie este arquivo para "tmdb.properties" (no mesmo diretório) e preencha com sua chave de
+# API pessoal (https://www.themoviedb.org/settings/api). "tmdb.properties" nunca é versionado
+# (ver .gitignore) — nunca commitar a chave real aqui ou em qualquer outro arquivo rastreado
+# pelo git.
+#
+# A ausência deste arquivo NÃO impede o resto da aplicação de funcionar — o catálogo continua
+# operando normalmente sem a integração TMDB (ver FabricaTmdb.isConfigurado()); apenas as
+# telas de descoberta/importação ficam indisponíveis.
+
+tmdb.apiKey=SUA_CHAVE_DE_API_AQUI
+
+# Opcionais — só precisam ser descomentados se o TMDB mudar as URLs base (os valores abaixo já
+# são o default usado pela aplicação quando a propriedade está ausente, ver FabricaTmdb).
+#tmdb.baseUrl=https://api.themoviedb.org/3
+#tmdb.imageBaseUrl=https://image.tmdb.org/t/p/w342
