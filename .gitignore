@@ -9,7 +9,9 @@
 #   .claude/                (ignorado — skills e agentes do Claude Code)
 #   docs/sdd/               (ignorado — processo SDD, incl. trilha de segurança/pentest)
 #   docs/modelagem/         (RASTREADO — diagrama de classes, casos de uso, DER: exigidos pelo PDF)
-#   docs/relatorio-tecnico.md, docs/manual-usuario.md (RASTREADOS — entregáveis do PDF)
+#   docs/relatorio-tecnico/ (RASTREADO — relatório técnico em LaTeX + PDF compilado, exigidos
+#                            pelo PDF; artefatos de build do LaTeX abaixo continuam ignorados)
+#   docs/manual-usuario.md  (RASTREADO — entregável do PDF)
 #   specs/                  (ignorado — especificações internas, processo de IA)
 #   security/               (ignorado — repositório de achados do pentest blackbox)
 CLAUDE.md
@@ -47,6 +49,14 @@ desktop.ini
 ### Logs ###
 *.log
 logs/
+
+### Build (LaTeX) — artefatos gerados pelo pdflatex, nunca o .tex nem o .pdf final ###
+*.aux
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
 
 ### Segredos e configuração local (JDBC/DB, chaves de API externas) ###
 # Nunca versionar credenciais/chaves reais — ver trilha de segurança

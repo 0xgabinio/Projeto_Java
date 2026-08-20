@@ -9,6 +9,10 @@
 \usepackage[brazil]{babel}
 \usepackage{geometry}
 \geometry{a4paper, margin=2.5cm}
+% Reduz "overfull hbox" causados por identificadores/URLs longos em \texttt, dando ao
+% justificador um pouco mais de folga antes de forçar uma linha a estourar a margem --
+% prática padrão, não altera a aparência do restante do documento.
+\setlength{\emergencystretch}{3em}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{listings}
