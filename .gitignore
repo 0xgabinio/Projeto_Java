@@ -14,11 +14,14 @@
 #   docs/manual-usuario.md  (RASTREADO — entregável do PDF)
 #   specs/                  (ignorado — especificações internas, processo de IA)
 #   security/               (ignorado — repositório de achados do pentest blackbox)
+#   docs/PICPIT_atividade.docx (ignorado — atividade individual à parte, com RGM/dados
+#                            pessoais, não é entregável do projeto Catálogo de Filmes)
 CLAUDE.md
 .claude/
 docs/sdd/
 specs/
 security/
+docs/PICPIT_atividade.docx
 
 ### Build (Maven) ###
 target/
