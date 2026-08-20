@@ -10,4 +10,20 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- Defesa em profundidade: rede de segurança para qualquer exceção não tratada
+         explicitamente por um Servlet, ou código de erro HTTP não tratado — nunca expõe stack
+         trace/detalhes técnicos ao usuário final (Situação-Problema 2 do PDF). -->
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/jsp/erro.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/jsp/erro.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/jsp/erro.jsp</location>
+    </error-page>
+
 </web-app>
