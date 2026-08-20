@@ -43,6 +43,12 @@ public class FilmeDAOImpl implements FilmeDAO {
             "SELECT id, titulo, diretor, ano_lancamento, genero, sinopse, capa_url, nota_tmdb "
                     + "FROM filme WHERE titulo LIKE ? OR diretor LIKE ? ORDER BY titulo";
 
+    private static final String SQL_EXISTE_TITULO_E_ANO =
+            "SELECT 1 FROM filme WHERE LOWER(titulo) = LOWER(?) AND ano_lancamento = ? LIMIT 1";
+
+    private static final String SQL_EXISTE_TITULO_SEM_ANO =
+            "SELECT 1 FROM filme WHERE LOWER(titulo) = LOWER(?) AND ano_lancamento IS NULL LIMIT 1";
+
     @Override
     public void inserir(Filme filme) throws SQLException {
         try (Connection conexao = FabricaDeConexoes.getConexao();
@@ -165,6 +171,24 @@ public class FilmeDAOImpl implements FilmeDAO {
         }
 
         return filmes;
+    }
+
+    @Override
+    public boolean existeComTituloEAno(String titulo, int anoLancamento) throws SQLException {
+        String sql = anoLancamento > 0 ? SQL_EXISTE_TITULO_E_ANO : SQL_EXISTE_TITULO_SEM_ANO;
+
+        try (Connection conexao = FabricaDeConexoes.getConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            stmt.setString(1, titulo);
+            if (anoLancamento > 0) {
+                stmt.setInt(2, anoLancamento);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
     }
 
     /** Mapeia a linha atual do {@link ResultSet} para um {@link Filme}. */

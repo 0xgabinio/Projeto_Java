@@ -26,7 +26,9 @@ import java.util.List;
  * {@code ExcluirFilmeServlet}: ação que altera dados não deve ser acionável via {@code GET}).
  * Busca os detalhes completos no TMDB (inclui gênero e diretor, diferente da lista de
  * populares), valida via {@link FilmeValidator} (mesma lógica do cadastro/edição manual — o
- * TMDB é uma fonte externa e seus dados não são confiáveis por padrão) e só então insere via
+ * TMDB é uma fonte externa e seus dados não são confiáveis por padrão), checa duplicidade
+ * (mesmo título + ano já cadastrado, via {@link FilmeDAO#existeComTituloEAno}) — o mesmo
+ * filme do carrossel pode ser clicado mais de uma vez — e só então insere via
  * {@link FilmeDAO}, sem expor detalhes técnicos ao usuário em caso de falha
  * (Situação-Problema 2 do PDF).
  */
@@ -73,6 +75,21 @@ public class ImportarFilmeTmdbServlet extends HttpServlet {
             getServletContext().log("Filme TMDB id=" + tmdbId + " reprovado na validação: " + erros);
             session.setAttribute("erros", List.of(
                     "Não foi possível importar este filme — dados retornados pelo TMDB são inválidos."));
+            response.sendRedirect(request.getContextPath() + "/descobrirFilmes");
+            return;
+        }
+
+        try {
+            if (filmeDAO.existeComTituloEAno(titulo, tmdbFilme.getAnoLancamento())) {
+                session.setAttribute("erros", List.of(
+                        "\"" + titulo + "\" já está no seu catálogo."));
+                response.sendRedirect(request.getContextPath() + "/descobrirFilmes");
+                return;
+            }
+        } catch (SQLException e) {
+            getServletContext().log("Falha ao verificar duplicidade do filme TMDB id=" + tmdbId, e);
+            session.setAttribute("erros", List.of(
+                    "Não foi possível importar este filme agora. Tente novamente em instantes."));
             response.sendRedirect(request.getContextPath() + "/descobrirFilmes");
             return;
         }

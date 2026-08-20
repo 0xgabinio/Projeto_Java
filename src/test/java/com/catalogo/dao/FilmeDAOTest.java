@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -241,5 +242,50 @@ class FilmeDAOTest {
         // Sondagem de SQL Injection (Situação-Problema 1) — deve ser tratado como dado literal
         // pelo PreparedStatement, nunca gerar erro de sintaxe SQL.
         assertDoesNotThrow(() -> filmeDAO.buscarPorTituloOuDiretor("'"));
+    }
+
+    // ---- existeComTituloEAno ----
+
+    @Test
+    void existeComTituloEAno_deveRetornarTrue_quandoMesmoTituloEAno() throws SQLException {
+        filmeDAO.inserir(criarFilme("Duna", "Denis Villeneuve", 2021, "Ficção Científica", null));
+
+        assertTrue(filmeDAO.existeComTituloEAno("Duna", 2021));
+    }
+
+    @Test
+    void existeComTituloEAno_deveSerCaseInsensitiveNoTitulo() throws SQLException {
+        filmeDAO.inserir(criarFilme("Duna", "Denis Villeneuve", 2021, "Ficção Científica", null));
+
+        assertTrue(filmeDAO.existeComTituloEAno("DUNA", 2021));
+    }
+
+    @Test
+    void existeComTituloEAno_deveRetornarFalse_quandoAnoDiferente() throws SQLException {
+        filmeDAO.inserir(criarFilme("Duna", "Denis Villeneuve", 2021, "Ficção Científica", null));
+
+        assertFalse(filmeDAO.existeComTituloEAno("Duna", 1984));
+    }
+
+    @Test
+    void existeComTituloEAno_deveRetornarFalse_quandoTituloDiferente() throws SQLException {
+        filmeDAO.inserir(criarFilme("Duna", "Denis Villeneuve", 2021, "Ficção Científica", null));
+
+        assertFalse(filmeDAO.existeComTituloEAno("Oppenheimer", 2021));
+    }
+
+    @Test
+    void existeComTituloEAno_deveValidarAnoZeroComoNaoInformado() throws SQLException {
+        // anoLancamento = 0 é "não informado" (ver Filme.java) — persistido como NULL no banco.
+        filmeDAO.inserir(criarFilme("Filme Sem Ano", null, 0, null, null));
+
+        assertTrue(filmeDAO.existeComTituloEAno("Filme Sem Ano", 0));
+        // Mesmo título, mas com ano informado, não deve casar com o registro sem ano.
+        assertFalse(filmeDAO.existeComTituloEAno("Filme Sem Ano", 2020));
+    }
+
+    @Test
+    void existeComTituloEAno_deveRetornarFalse_quandoTabelaVazia() throws SQLException {
+        assertFalse(filmeDAO.existeComTituloEAno("Qualquer Título", 2021));
     }
 }

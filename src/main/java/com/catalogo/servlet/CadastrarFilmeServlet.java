@@ -23,8 +23,9 @@ import java.util.List;
  * Controller (Servlet) para o cadastro de um novo {@link Filme}.
  * <p>
  * Implementa {@code specs/cadastrar-filme.md}: recebe os dados do formulário
- * ({@code cadastroFilme.jsp}), valida (via {@link FilmeValidator}) antes de persistir, delega
- * a inserção ao {@link FilmeDAO} e nunca expõe detalhes técnicos (stack trace, SQL) ao
+ * ({@code cadastroFilme.jsp}), valida (via {@link FilmeValidator}) e checa duplicidade (mesmo
+ * título + ano já cadastrado, via {@link FilmeDAO#existeComTituloEAno}) antes de persistir,
+ * delega a inserção ao {@link FilmeDAO} e nunca expõe detalhes técnicos (stack trace, SQL) ao
  * usuário final — Situação-Problema 2 do PDF do enunciado.
  * <p>
  * Também implementa {@code specs/integrar-tmdb.md} (RF-03/RF-04): {@code doGet} aceita os
@@ -116,10 +117,27 @@ public class CadastrarFilmeServlet extends HttpServlet {
             return;
         }
 
+        int anoLancamento = anoLancamentoStr == null ? 0 : Integer.parseInt(anoLancamentoStr);
+
+        try {
+            if (filmeDAO.existeComTituloEAno(titulo, anoLancamento)) {
+                request.setAttribute("erros", List.of(
+                        "Já existe um filme cadastrado com esse título e ano de lançamento."));
+                request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
+                return;
+            }
+        } catch (SQLException e) {
+            getServletContext().log("Falha ao verificar duplicidade de Filme", e);
+            request.setAttribute("erros", List.of(
+                    "Não foi possível salvar o filme agora. Tente novamente em instantes."));
+            request.getRequestDispatcher("/WEB-INF/jsp/cadastroFilme.jsp").forward(request, response);
+            return;
+        }
+
         Filme filme = new Filme();
         filme.setTitulo(titulo);
         filme.setDiretor(diretor);
-        filme.setAnoLancamento(anoLancamentoStr == null ? 0 : Integer.parseInt(anoLancamentoStr));
+        filme.setAnoLancamento(anoLancamento);
         filme.setGenero(genero);
         filme.setSinopse(sinopse);
         filme.setCapaUrl(capaUrl);

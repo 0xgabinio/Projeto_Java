@@ -69,4 +69,19 @@ public interface FilmeDAO {
      * @throws SQLException se a consulta falhar
      */
     List<Filme> buscarPorTituloOuDiretor(String termo) throws SQLException;
+
+    /**
+     * Verifica se já existe um filme cadastrado com o mesmo {@code titulo} (comparação
+     * case-insensitive, correspondência exata — não é busca parcial) e o mesmo
+     * {@code anoLancamento}. Usado para evitar duplicatas ao cadastrar manualmente ou importar
+     * do TMDB (mesmo filme podendo ser buscado/importado mais de uma vez).
+     *
+     * @param titulo         título exato a comparar (não deve ser {@code null})
+     * @param anoLancamento  ano de lançamento a comparar; {@code 0} é tratado como "não
+     *                       informado" (mesma convenção de {@link Filme#getAnoLancamento()}) e
+     *                       casa apenas com registros cujo ano também não foi informado
+     * @return {@code true} se já existir um filme com esse título e ano
+     * @throws SQLException se a consulta falhar
+     */
+    boolean existeComTituloEAno(String titulo, int anoLancamento) throws SQLException;
 }
