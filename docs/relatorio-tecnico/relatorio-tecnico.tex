@@ -103,24 +103,24 @@
 % ============================================================================
 \section{Introdução}
 
-Este relatório documenta o desenvolvimento do \textbf{Catálogo Simples de Filmes}, projeto
+Neste relatório, descrevo o desenvolvimento do \textbf{Catálogo Simples de Filmes}, meu projeto
 individual da disciplina \textit{Projetos Computacionais: da Teoria à Prática} (Projeto
 Integrador Transdisciplinar -- PIT -- em Ciência da Computação, Cruzeiro do Sul Virtual),
-conduzida pela metodologia de Aprendizagem Baseada em Projetos (ABP). O enunciado da disciplina
-propõe, de forma genérica, um ``Catálogo Simples de Livros ou Filmes'': uma aplicação web capaz
-de catalogar e consultar itens de mídia, com atributos mínimos de título, autor/diretor, ano de
+conduzida pela metodologia de Aprendizagem Baseada em Projetos (ABP). A proposta da disciplina
+era, de forma genérica, um ``Catálogo Simples de Livros ou Filmes'': uma aplicação web capaz de
+catalogar e consultar itens de mídia, com atributos mínimos de título, autor/diretor, ano de
 publicação/lançamento, gênero e sinopse.
 
-Este projeto adota um recorte específico dessa proposta genérica: um catálogo focado
-\textbf{exclusivamente em filmes}, com a entidade central \texttt{Filme}. A escolha da temática
-de cinema, em vez de um catálogo multi-mídia (livros, séries e filmes ao mesmo tempo), foi uma
+Optei por um recorte específico dessa proposta genérica: um catálogo focado
+\textbf{exclusivamente em filmes}, com a entidade central \texttt{Filme}. Escolhi a temática de
+cinema, em vez de um catálogo multi-mídia (livros, séries e filmes ao mesmo tempo), como uma
 decisão consciente de simplificação de escopo, compatível com a recomendação do próprio
 enunciado de manter o projeto ``gerenciável dentro do cronograma semestral''.
 
 \subsection{Objetivos}
 
-O objetivo principal é aplicar, na prática, os conhecimentos de Programação Orientada a Objetos
-em Java a um sistema web completo, contemplando:
+Meu objetivo principal foi aplicar, na prática, os conhecimentos de Programação Orientada a
+Objetos em Java a um sistema web completo, contemplando:
 
 \begin{itemize}
     \item Interface web para navegação e gerenciamento do catálogo;
@@ -133,25 +133,25 @@ em Java a um sistema web completo, contemplando:
     \item Persistência dos dados em banco de dados relacional.
 \end{itemize}
 
-Além do escopo mandatório do enunciado, o autor optou por implementar duas extensões opcionais
+Além do escopo mandatório do enunciado, optei por implementar duas extensões opcionais
 mencionadas como ``possíveis extensões'' no PDF do enunciado: (a) a integração com a API pública
 do TMDB (\textit{The Movie Database}), permitindo importar pôsteres, notas públicas e dados de
 filmes populares diretamente para o catálogo local; e (b) a reestilização completa da interface
-com o framework Bootstrap 5, incluindo modo escuro alternável e efeitos visuais. Essas duas
-extensões são descritas em detalhe nas Seções~\ref{sec:desenvolvimento} e~\ref{sec:resultados}.
+com o framework Bootstrap 5, incluindo modo escuro alternável e efeitos visuais. Descrevo essas
+duas extensões em detalhe nas Seções~\ref{sec:desenvolvimento} e~\ref{sec:resultados}.
 
 \subsection{Justificativa}
 
-Ainda que o caráter do trabalho seja predominantemente acadêmico, a justificativa do projeto é
-dupla. Do ponto de vista pedagógico, o desenvolvimento de um CRUD completo com busca --
-exatamente o escopo descrito no enunciado -- exercita de forma concentrada os pilares do
+Ainda que o caráter do trabalho seja predominantemente acadêmico, minha justificativa para o
+projeto é dupla. Do ponto de vista pedagógico, desenvolver um CRUD completo com busca --
+exatamente o escopo descrito no enunciado -- me exercitou de forma concentrada nos pilares do
 desenvolvimento web em Java (Servlets como controladores, JSP como camada de visão, DAO como
-camada de acesso a dados via JDBC) e, de forma deliberada, expõe o autor a três
+camada de acesso a dados via JDBC) e, de forma deliberada, me expôs a três
 ``situações-problema'' de segurança e engenharia de software centrais à disciplina: prevenção de
 SQL Injection via \texttt{PreparedStatement}, tratamento robusto de exceções e validação de
 dados, e refatoração para reduzir duplicação de código através de camadas DAO/serviço. Do ponto
-de vista prático, o resultado é uma ferramenta de uso pessoal genuinamente útil: um catálogo de
-filmes assistidos/a assistir, enriquecido com dados públicos do TMDB.
+de vista prático, o resultado é uma ferramenta de uso pessoal que efetivamente uso: um catálogo
+dos filmes que já assisti ou pretendo assistir, enriquecido com dados públicos do TMDB.
 
 % ============================================================================
 % 2. METODOLOGIA
@@ -160,7 +160,7 @@ filmes assistidos/a assistir, enriquecido com dados públicos do TMDB.
 
 \subsection{Aprendizagem Baseada em Projetos (ABP)}
 
-O desenvolvimento deste projeto segue integralmente a metodologia de Aprendizagem Baseada em
+Segui integralmente, no desenvolvimento deste projeto, a metodologia de Aprendizagem Baseada em
 Projetos (ABP), conforme proposta pela disciplina. A ABP é uma estratégia pedagógica que coloca
 o(a) estudante no centro do processo de aprendizagem, promovendo a aquisição de conhecimento por
 meio do engajamento ativo em projetos do mundo real e pessoalmente significativos (LARMER;
@@ -168,24 +168,25 @@ MERGENDOLLER; BOSS, 2015). Diferentemente de modelos tradicionais de ensino expo
 exige investigação sustentada -- pesquisa, análise crítica e síntese de informações ao longo de
 um período extenso (THOMAS, 2000) -- e autenticidade, isto é, problemas contextualizados no mundo
 real, o que aumenta o engajamento e a percepção de relevância do aprendizado (BLUMENFELD et al.,
-1991). No contexto da Ciência da Computação, essas características se traduzem diretamente no
-desenvolvimento de um sistema funcional, do levantamento de requisitos até a entrega documentada,
-exercitando tanto habilidades técnicas quanto competências do século XXI -- pensamento crítico,
-criatividade, colaboração e comunicação (TRILLING; FADEL, 2009).
+1991). No contexto da Ciência da Computação, essas características se traduziram diretamente no
+desenvolvimento do sistema funcional que apresento neste relatório, do levantamento de
+requisitos até a entrega documentada, exercitando tanto habilidades técnicas quanto competências
+do século XXI -- pensamento crítico, criatividade, colaboração e comunicação (TRILLING; FADEL,
+2009).
 
 \subsection{Abordagem iterativa e processo interno de especificação}
 
-O desenvolvimento seguiu uma abordagem \textbf{iterativa}, dividida em pequenos marcos (ciclos ou
+Segui uma abordagem \textbf{iterativa}, dividida em pequenos marcos (ciclos ou
 \textit{sprints}) alinhados às funcionalidades do CRUD: módulo de cadastro, módulo de
 listagem/busca, módulo de detalhe, módulo de edição/exclusão e, por fim, as extensões opcionais
-(integração TMDB e reestilização de interface). Cada ciclo seguiu internamente um processo de
+(integração TMDB e reestilização de interface). Dentro de cada ciclo, segui um processo de
 \textbf{Spec-Driven Development} (SDD): toda funcionalidade nasceu como uma especificação formal
 (arquivo em \texttt{specs/}, a partir de um modelo padronizado) \textit{antes} de qualquer linha
 de código, contendo requisitos funcionais e não funcionais, modelo de dados, modelagem UML,
-critérios de aceite e considerações de segurança. Cada especificação só avançou de fase --
+critérios de aceite e considerações de segurança. Só avancei cada especificação de fase --
 Rascunho, Em Revisão, Aprovada, Implementada, Concluída -- quando os critérios daquela fase
-foram integralmente satisfeitos, incluindo uma revisão de segurança e testes automatizados antes
-de ser considerada concluída. Esse processo interno de especificação, documentado em
+estavam integralmente satisfeitos, incluindo uma revisão de segurança e testes automatizados
+antes de considerá-la concluída. Esse processo interno de especificação, documentado em
 \texttt{docs/sdd/}, deu rastreabilidade direta entre os requisitos do enunciado da disciplina, o
 código efetivamente produzido e este Relatório Técnico.
 
@@ -197,7 +198,7 @@ Relatório Técnico.
 
 \subsection{Tecnologias utilizadas}
 
-A stack tecnológica adotada é a exigida pelo enunciado da disciplina, sem uso de \textit{frameworks}
+Usei a stack tecnológica exigida pelo enunciado da disciplina, sem \textit{frameworks}
 adicionais além do estritamente necessário para a apresentação (Bootstrap, via CDN, discutido na
 Seção~\ref{sec:desenvolvimento}):
 
@@ -253,14 +254,14 @@ funcionalidade, são:
         filmes cujo título ou diretor correspondem ao termo buscado.
 \end{itemize}
 
-Como extensão opcional, dois casos de uso adicionais foram implementados: \textbf{Descobrir
-Filmes Populares (TMDB)}, que exibe um carrossel de filmes populares consultados em tempo real na
-API do TMDB, com um botão \textbf{Importar Filme do TMDB} que insere o filme escolhido
-diretamente no catálogo local; e \textbf{Buscar Filme no TMDB} dentro do próprio formulário de
-cadastro, que pré-preenche os campos a partir de um resultado escolhido pelo usuário. Em ambos
-os casos, uma eventual indisponibilidade da API do TMDB nunca compromete o cadastro manual nem
-o restante do catálogo -- uma decisão de design registrada explicitamente na especificação da
-integração.
+Como extensão opcional, implementei dois casos de uso adicionais: \textbf{Descobrir Filmes
+Populares (TMDB)}, que exibe um carrossel de filmes populares consultados em tempo real na API
+do TMDB, com um botão \textbf{Importar Filme do TMDB} que insere o filme escolhido diretamente
+no catálogo local; e \textbf{Buscar Filme no TMDB} dentro do próprio formulário de cadastro, que
+pré-preenche os campos a partir de um resultado escolhido pelo usuário. Em ambos os casos,
+decidi que uma eventual indisponibilidade da API do TMDB nunca deveria comprometer o cadastro
+manual nem o restante do catálogo -- decisão de design registrada explicitamente na
+especificação da integração.
 
 \subsection{Diagrama de classes}
 
@@ -323,8 +324,8 @@ CREATE TABLE filme (
 \end{lstlisting}
 
 Apenas \texttt{titulo} é obrigatório (\texttt{NOT NULL}); todos os demais campos são opcionais,
-refletindo a decisão de projeto de que um cadastro mínimo (só o título) já é válido. As colunas
-\texttt{capa\_url} e \texttt{nota\_tmdb} foram adicionadas em um segundo momento, via
+refletindo minha decisão de projeto de que um cadastro mínimo (só o título) já é válido. As
+colunas \texttt{capa\_url} e \texttt{nota\_tmdb} foram adicionadas em um segundo momento, via
 \texttt{ALTER TABLE}, para suportar a extensão de integração com o TMDB, sem exigir nenhuma
 tabela adicional -- os dados do TMDB são consultados em tempo real e apenas os filmes efetivamente
 importados são persistidos localmente.
@@ -348,18 +349,18 @@ valida, monta um objeto \texttt{Filme} e invoca o método correspondente em \tex
 usa \texttt{PreparedStatement} para executar o comando SQL; por fim, o Servlet redireciona para
 uma página de sucesso (listagem ou detalhe) ou reexibe o formulário com mensagens de erro.
 
-Duas decisões de arquitetura reduziram duplicação de código, no espírito da terceira
-situação-problema do enunciado (refatoração e orientação a objetos): (a) a validação de entrada
-foi extraída para a classe de serviço \texttt{FilmeValidator}, compartilhada entre o cadastro e a
-edição, em vez de duplicada em cada Servlet; e (b) a funcionalidade de busca não ganhou uma tela
-separada -- ela estende \texttt{ListarFilmesServlet}/\texttt{listarFilmes.jsp} com um parâmetro
-opcional \texttt{termo}, já que conceitualmente é a mesma listagem, apenas filtrada.
+Tomei duas decisões de arquitetura para reduzir a duplicação de código, no espírito da terceira
+situação-problema do enunciado (refatoração e orientação a objetos): (a) extraí a validação de
+entrada para a classe de serviço \texttt{FilmeValidator}, compartilhada entre o cadastro e a
+edição, em vez de duplicá-la em cada Servlet; e (b) não criei uma tela separada para a busca --
+ela estende \texttt{ListarFilmesServlet}/\texttt{listarFilmes.jsp} com um parâmetro opcional
+\texttt{termo}, já que conceitualmente é a mesma listagem, apenas filtrada.
 
 \subsection{Funcionalidade em destaque: Cadastro de Filme}
 
 O cadastro é a operação fundacional do CRUD. O trecho a seguir mostra o método
 \texttt{doPost} de \texttt{CadastrarFilmeServlet}, incluindo a verificação de duplicidade
-(mesmo título e ano de lançamento já cadastrados) adicionada em uma iteração posterior do
+(mesmo título e ano de lançamento já cadastrados) que adicionei em uma iteração posterior do
 projeto:
 
 \begin{lstlisting}[language=Java, caption={\texttt{CadastrarFilmeServlet.doPost} -- validação, checagem de duplicidade e persistência}, label={lst:cadastro}]
@@ -431,7 +432,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
 }
 \end{lstlisting}
 
-Note-se, no trecho acima, o padrão repetido em toda a aplicação: (1) os dados de entrada passam
+Destaco, no trecho acima, o padrão que repeti em toda a aplicação: (1) os dados de entrada passam
 por \texttt{FilmeValidator.tratarEntrada()} (normaliza \textit{strings} vazias/apenas espaço
 para \texttt{null}) antes de qualquer outra lógica; (2) a validação (\texttt{FilmeValidator.validar()})
 ocorre \textit{antes} de qualquer tentativa de persistência, reexibindo o formulário com os
@@ -446,8 +447,8 @@ antes do \texttt{INSERT}).
 \subsection{Funcionalidade em destaque: Busca de Filme}
 
 A busca por título ou diretor é o cenário motivador direto da primeira situação-problema do
-enunciado (SQL Injection ao concatenar campos de busca). A implementação em
-\texttt{FilmeDAOImpl} é a seguinte:
+enunciado (SQL Injection ao concatenar campos de busca). Assim implementei essa busca em
+\texttt{FilmeDAOImpl}:
 
 \begin{lstlisting}[language=Java, caption={\texttt{FilmeDAOImpl.buscarPorTituloOuDiretor} -- \texttt{LIKE} via \texttt{PreparedStatement}}, label={lst:busca}]
 // SQL_BUSCAR_POR_TITULO_OU_DIRETOR =
@@ -476,7 +477,7 @@ public List<Filme> buscarPorTituloOuDiretor(String termo) throws SQLException {
 }
 \end{lstlisting}
 
-O ponto central desta implementação, e a razão pela qual foi escolhida como uma das duas
+O ponto central desta implementação, e a razão pela qual a escolhi como uma das duas
 funcionalidades detalhadas neste relatório, é a ordem das operações: o termo de busca do usuário
 é combinado com os curingas \texttt{\%} (formando \texttt{"\%termo\%"}) \textit{antes} de ser
 passado como parâmetro via \texttt{stmt.setString()} -- em nenhum momento o valor do termo é
@@ -486,14 +487,14 @@ Essa distinção -- concatenar o valor do parâmetro versus concatenar a consult
 que separa uma implementação segura de \texttt{LIKE} de uma vulnerável a SQL Injection. Toda a
 consulta roda em \textit{try-with-resources}, garantindo o fechamento de conexão, \textit{statement}
 e \textit{result set} mesmo em caso de exceção, consistente com o padrão de tratamento de
-exceções adotado em toda a camada de acesso a dados do projeto.
+exceções que adotei em toda a camada de acesso a dados do projeto.
 
 \subsection{Extensões opcionais: integração TMDB e reestilização com Bootstrap}
 
-Além do escopo mandatório, o projeto implementa duas extensões opcionais mencionadas no
-enunciado da disciplina como possíveis, mas não obrigatórias. A primeira, integração com a API
-pública do TMDB (pacote \texttt{com.catalogo.tmdb}), permite: (a) descobrir filmes populares em
-um carrossel, com importação direta ao catálogo local; e (b) buscar um filme por título dentro do
+Além do escopo mandatório, implementei duas extensões opcionais mencionadas no enunciado da
+disciplina como possíveis, mas não obrigatórias. A primeira, integração com a API pública do
+TMDB (pacote \texttt{com.catalogo.tmdb}), permite: (a) descobrir filmes populares em um
+carrossel, com importação direta ao catálogo local; e (b) buscar um filme por título dentro do
 próprio formulário de cadastro, pré-preenchendo os campos -- incluindo o pôster -- a partir do
 resultado escolhido. A chave de API nunca é \textit{hardcoded} (segue o mesmo padrão de
 \texttt{db.properties} usado para as credenciais de banco), toda chamada HTTP tem \textit{timeout}
@@ -510,8 +511,8 @@ ao passar o mouse), sem introduzir nenhuma dependência de \textit{build} de fro
 \section{Resultados}
 \label{sec:resultados}
 
-Esta seção apresenta capturas de tela reais da aplicação em execução localmente, demonstrando as
-funcionalidades mandatórias do CRUD/busca e as duas extensões opcionais descritas na
+Nesta seção, apresento capturas de tela reais da aplicação em execução localmente, demonstrando
+as funcionalidades mandatórias do CRUD/busca e as duas extensões opcionais descritas na
 Seção~\ref{sec:desenvolvimento}.
 
 \subsection{Listagem de filmes}
@@ -598,18 +599,18 @@ cinco resultados para o usuário escolher e pré-preencher o formulário.
 \section{Considerações sobre Segurança}
 \label{sec:seguranca}
 
-A segurança foi tratada como parte integral do desenvolvimento (princípio de \textit{Secure by
-Design}, McGRAW, 2006), com uma revisão de segurança dedicada, seguindo um checklist fixo,
-executada ao final de cada funcionalidade -- \textbf{antes} de qualquer especificação ser
-considerada concluída -- e uma trilha independente de teste de penetração (\textit{pentest})
-\textit{blackbox}, escopada pelo OWASP Top 10:2021, executada após a conclusão de todas as
-funcionalidades mandatórias.
+Tratei a segurança como parte integral do desenvolvimento (princípio de \textit{Secure by
+Design}, McGRAW, 2006): apliquei uma revisão de segurança dedicada, seguindo um checklist fixo,
+ao final de cada funcionalidade -- \textbf{antes} de qualquer especificação ser considerada
+concluída -- e, após a conclusão de todas as funcionalidades mandatórias, executei uma trilha
+independente de teste de penetração (\textit{pentest}) \textit{blackbox}, escopada pelo OWASP
+Top 10:2021.
 
 \subsection{Revisão de segurança por funcionalidade}
 
-Todas as especificações do projeto (cadastro, listagem, detalhe, edição, exclusão, busca,
-integração TMDB e reestilização de interface) passaram por uma revisão de segurança formal,
-cobrindo cinco categorias fixas: SQL Injection, tratamento de exceções, validação de dados, XSS
+Submeti todas as especificações do projeto (cadastro, listagem, detalhe, edição, exclusão,
+busca, integração TMDB e reestilização de interface) a uma revisão de segurança formal, cobrindo
+cinco categorias fixas: SQL Injection, tratamento de exceções, validação de dados, XSS
 (\textit{Cross-Site Scripting}) e proteção de credenciais/chaves. Os pontos centrais,
 consistentes em todo o projeto, são:
 
@@ -637,20 +638,20 @@ consistentes em todo o projeto, são:
         \texttt{FabricaTmdb}).
 \end{itemize}
 
-Todas as revisões resultaram em aprovação integral (5/5 itens, com alguns itens marcados
+Obtive aprovação integral em todas as revisões (5/5 itens, com alguns itens marcados
 \textit{N/A} quando não aplicáveis, como validação de dados em funcionalidades somente-leitura).
-As poucas observações registradas durante essas revisões foram classificadas como não
-bloqueantes -- lacunas de robustez defensiva, não vulnerabilidades de segurança propriamente
-ditas (por exemplo, ausência de validação de faixa de valores em um campo interno que nunca é
-editado diretamente pelo usuário) -- e ficaram documentadas nas especificações correspondentes
-para eventual correção futura.
+As poucas observações que registrei durante essas revisões classifiquei como não bloqueantes --
+lacunas de robustez defensiva, não vulnerabilidades de segurança propriamente ditas (por
+exemplo, ausência de validação de faixa de valores em um campo interno que nunca é editado
+diretamente pelo usuário) -- e as documentei nas especificações correspondentes para eventual
+correção futura.
 
 \subsection{Achados do pentest \textit{blackbox} (Nível 3 -- trilha de segurança)}
 
-Após a conclusão de todas as funcionalidades mandatórias, uma trilha independente de teste de
-penetração \textit{blackbox}, escopada pelo OWASP Top 10:2021, foi executada contra a aplicação
-em execução, sob a regra inegociável de \textbf{reportar, nunca explorar}. Dois achados foram
-registrados, ambos já triados e \textbf{encerrados}:
+Após a conclusão de todas as funcionalidades mandatórias, executei uma trilha independente de
+teste de penetração \textit{blackbox}, escopada pelo OWASP Top 10:2021, contra a aplicação em
+execução, sob a regra inegociável de \textbf{reportar, nunca explorar}. Registrei dois achados,
+ambos já triados e \textbf{encerrados}:
 
 \begin{itemize}
     \item \textbf{Ausência de controle de acesso e de proteção CSRF} (severidade Média,
@@ -659,34 +660,34 @@ registrados, ambos já triados e \textbf{encerrados}:
         de uso pessoal --, qualquer visitante que descubra um \texttt{id} de filme pode, em
         tese, editá-lo ou excluí-lo, e o formulário de exclusão não possui token anti-CSRF (a
         única mitigação é o uso exclusivo de \texttt{POST}, nunca \texttt{GET}, mais uma
-        confirmação do lado do cliente). Esse indício já havia sido identificado e formalmente
-        aceito como risco durante as revisões de segurança de cada especificação individual; o
-        pentest \textit{blackbox} apenas confirmou, de fora, o que já era conhecido. Status
-        final: \textbf{Risco Aceito} -- reavaliação recomendada caso uma extensão de
-        autenticação venha a ser implementada no futuro;
+        confirmação do lado do cliente). Eu já havia identificado esse indício e o havia
+        formalmente aceito como risco durante as revisões de segurança de cada especificação
+        individual; o pentest \textit{blackbox} apenas confirmou, de fora, o que eu já sabia.
+        Status final: \textbf{Risco Aceito} -- pretendo reavaliar caso implemente uma extensão
+        de autenticação no futuro;
     \item \textbf{Ausência de cabeçalhos HTTP de segurança} (severidade Baixa, OWASP A05:2021 --
         \textit{Security Misconfiguration}). A configuração padrão do servidor não incluía
         cabeçalhos de defesa em profundidade como \texttt{X-Frame-Options},
         \texttt{Content-Security-Policy}, \texttt{X-Content-Type-Options} e um atributo
-        \texttt{SameSite} explícito no cookie de sessão. Este achado foi efetivamente
-        \textbf{corrigido}: foi implementado um novo filtro de \textit{servlet},
-        \texttt{CabecalhosSegurancaFilter}, que adiciona os quatro primeiros cabeçalhos a toda
-        resposta HTTP (com uma \textit{Content Security Policy} restrita aos domínios
-        efetivamente usados pela aplicação -- CDN do Bootstrap e imagens do TMDB), e o cookie de
-        sessão passou a ser configurado com \texttt{SameSite=Lax} via
-        \texttt{META-INF/context.xml} do Tomcat. A correção foi revalidada (\texttt{mvn test},
-        inspeção dos cabeçalhos HTTP reais e confirmação de que nenhuma funcionalidade existente
-        foi quebrada). Status final: \textbf{Corrigido}.
+        \texttt{SameSite} explícito no cookie de sessão. Eu \textbf{corrigi} efetivamente este
+        achado: implementei um novo filtro de \textit{servlet}, \texttt{CabecalhosSegurancaFilter},
+        que adiciona os quatro primeiros cabeçalhos a toda resposta HTTP (com uma
+        \textit{Content Security Policy} restrita aos domínios efetivamente usados pela
+        aplicação -- CDN do Bootstrap e imagens do TMDB), e configurei o cookie de sessão com
+        \texttt{SameSite=Lax} via \texttt{META-INF/context.xml} do Tomcat. Revalidei a correção
+        (\texttt{mvn test}, inspeção dos cabeçalhos HTTP reais e confirmação de que nenhuma
+        funcionalidade existente foi quebrada). Status final: \textbf{Corrigido}.
 \end{itemize}
 
 \subsection{Cobertura de testes}
 
-A camada de acesso a dados (\texttt{FilmeDAOImpl}) conta com uma suíte de 20 testes JUnit 5
-(\texttt{src/test/java/com/catalogo/dao/FilmeDAOTest.java}), executados de fato (\texttt{mvn test})
-contra um banco MariaDB real, cobrindo todos os métodos de \texttt{FilmeDAO} -- incluindo casos
-de sucesso, ausência de correspondência, e um teste específico de sondagem com aspas simples
-(\texttt{buscarPorTituloOuDiretor\_naoDeveLancarExcecao\_comAspasSimples}) para confirmar,
-empiricamente, a ausência de vulnerabilidade a SQL Injection na funcionalidade de busca.
+Escrevi, para a camada de acesso a dados (\texttt{FilmeDAOImpl}), uma suíte de 20 testes JUnit 5
+(\texttt{src/test/java/com/catalogo/dao/FilmeDAOTest.java}), que executei de fato (\texttt{mvn
+test}) contra um banco MariaDB real, cobrindo todos os métodos de \texttt{FilmeDAO} -- incluindo
+casos de sucesso, ausência de correspondência, e um teste específico de sondagem com aspas
+simples (\texttt{buscarPorTituloOuDiretor\_naoDeveLancarExcecao\_comAspasSimples}) para
+confirmar, empiricamente, a ausência de vulnerabilidade a SQL Injection na funcionalidade de
+busca.
 
 % ============================================================================
 % 7. CONCLUSÕES
@@ -701,12 +702,12 @@ empiricamente, a ausência de vulnerabilidade a SQL Injection na funcionalidade 
 %     testes automatizados de front-end, deploy em produção).
 % O texto abaixo é apenas um esqueleto de apoio -- substituir pelo relato real.
 
-\textit{[Esta seção deve ser preenchida pelo autor do projeto, com uma reflexão pessoal sobre o
-processo de desenvolvimento. Sugestão de estrutura: (1) principais dificuldades técnicas
-encontradas; (2) principais aprendizados, tanto técnicos (Java, Servlets/JSP/JDBC, segurança)
-quanto de processo (Aprendizagem Baseada em Projetos, especificação antes de código); (3)
-possíveis trabalhos futuros, por exemplo: implementação de autenticação de usuários (o que
-reabriria a discussão de controle de acesso da Seção~\ref{sec:seguranca}), paginação da
+\textit{[Preencha esta seção com uma reflexão pessoal, na primeira pessoa, sobre o processo de
+desenvolvimento. Sugestão de estrutura: (1) principais dificuldades técnicas que você encontrou;
+(2) principais aprendizados, tanto técnicos (Java, Servlets/JSP/JDBC, segurança) quanto de
+processo (Aprendizagem Baseada em Projetos, especificação antes de código); (3) possíveis
+trabalhos futuros que pretende explorar, por exemplo: implementação de autenticação de usuários
+(o que reabriria a discussão de controle de acesso da Seção~\ref{sec:seguranca}), paginação da
 listagem, filtragem por gênero, ou testes automatizados end-to-end da camada de apresentação.]}
 
 % ============================================================================
@@ -778,7 +779,7 @@ listagem, filtragem por gênero, ou testes automatizados end-to-end da camada de
 % ============================================================================
 \section{Documentação do Código-Fonte}
 
-Todo o código-fonte Java do projeto é comentado de duas formas complementares. Primeiro,
+Comentei todo o código-fonte Java do projeto de duas formas complementares. Primeiro,
 comentários de linha (\texttt{//}) explicam decisões de design pontuais e blocos de lógica não
 óbvia diretamente no ponto onde ocorrem -- por exemplo, a razão pela qual o filtro de codificação
 UTF-8 precisa ser o primeiro da cadeia de filtros, ou por que o campo \texttt{notaTmdb} é do tipo
@@ -790,14 +791,14 @@ seguindo a convenção padrão da linguagem Java, incluindo descrição do prop�
 aplicável.
 
 A interface \texttt{FilmeDAO} e a classe \texttt{FabricaDeConexoes} já continham Javadoc completo
-desde a implementação original de cada funcionalidade. Nesta rodada final de documentação, o
-Javadoc foi auditado e complementado nos métodos \texttt{doGet}/\texttt{doPost} de todos os sete
+desde a implementação original de cada funcionalidade. Nesta rodada final de documentação,
+auditei e complementei o Javadoc nos métodos \texttt{doGet}/\texttt{doPost} de todos os sete
 Servlets do projeto e no método \texttt{doFilter} dos dois filtros de \textit{servlet}
 (\texttt{CodificacaoUtf8Filter} e \texttt{CabecalhosSegurancaFilter}), que já possuíam Javadoc a
 nível de classe, mas ainda não a nível de método -- nove classes ao todo passaram a ter Javadoc
 de método, descrevendo especificamente a rota/operação HTTP tratada por cada uma, seus
-parâmetros de requisição e o comportamento em caso de erro. O Javadoc de
-\texttt{com.catalogo.model.Filme} segue a recomendação da disciplina de manter um comentário de
+parâmetros de requisição e o comportamento em caso de erro. No Javadoc de
+\texttt{com.catalogo.model.Filme}, segui a recomendação da disciplina de manter um comentário de
 classe curto (sem Javadoc redundante em cada \textit{getter}/\textit{setter} trivial).
 
 % ============================================================================
@@ -805,8 +806,8 @@ classe curto (sem Javadoc redundante em cada \textit{getter}/\textit{setter} tri
 % ============================================================================
 \section{Manual do Usuário Simplificado}
 
-Um manual do usuário simplificado, voltado a quem nunca utilizou o sistema (linguagem não
-técnica), está disponível separadamente em \texttt{docs/manual-usuario.md}. Ele cobre, em uma a
+Escrevi um manual do usuário simplificado, voltado a quem nunca utilizou o sistema (linguagem
+não técnica), disponível separadamente em \texttt{docs/manual-usuario.md}. Ele cobre, em uma a
 duas páginas, como acessar a aplicação, cadastrar um novo filme (incluindo o uso opcional da
 busca por título no TMDB), listar e buscar filmes já cadastrados, visualizar os detalhes de um
 filme, editá-lo e excluí-lo, além de uma breve seção de dúvidas frequentes -- entre elas, por que
