@@ -694,21 +694,71 @@ busca.
 % ============================================================================
 \section{Conclusões}
 
-% TODO (autor humano): esta seção é reflexão pessoal e não deve ser gerada
-% automaticamente. Preencher com, no mínimo:
-%   - Dificuldades encontradas ao longo do desenvolvimento;
-%   - Principais aprendizados (técnicos e de processo);
-%   - Trabalhos futuros (ex.: autenticação, paginação, filtragem por gênero,
-%     testes automatizados de front-end, deploy em produção).
-% O texto abaixo é apenas um esqueleto de apoio -- substituir pelo relato real.
+\subsection{Dificuldades encontradas}
 
-\textit{[Preencha esta seção com uma reflexão pessoal, na primeira pessoa, sobre o processo de
-desenvolvimento. Sugestão de estrutura: (1) principais dificuldades técnicas que você encontrou;
-(2) principais aprendizados, tanto técnicos (Java, Servlets/JSP/JDBC, segurança) quanto de
-processo (Aprendizagem Baseada em Projetos, especificação antes de código); (3) possíveis
-trabalhos futuros que pretende explorar, por exemplo: implementação de autenticação de usuários
-(o que reabriria a discussão de controle de acesso da Seção~\ref{sec:seguranca}), paginação da
-listagem, filtragem por gênero, ou testes automatizados end-to-end da camada de apresentação.]}
+As maiores dificuldades técnicas que enfrentei não vieram do CRUD em si -- a arquitetura em
+camadas (JSP/Servlet/DAO) é direta uma vez internalizada --, mas de detalhes de ambiente e do
+comportamento do próprio contêiner de Servlets, difíceis de prever sem testar a aplicação de
+ponta a ponta. Dois exemplos concretos: (1) minha primeira tentativa de subir a aplicação no
+Tomcat falhou com ``No suitable driver found'', porque \texttt{FabricaDeConexoes} não registrava
+explicitamente o driver JDBC (\texttt{Class.forName("com.mysql.cj.jdbc.Driver")}) -- o driver
+estava no WAR, mas isso não bastava; e (2) acentos ficavam corrompidos (``Ficção'' virava
+``FicÃ§Ã£o'') porque o Tomcat decodifica parâmetros de formulário como ISO-8859-1 por padrão,
+resolvido com um filtro dedicado (\texttt{CodificacaoUtf8Filter}) -- e descobri, na sequência,
+que um fragmento JSP incluído via \texttt{<\%@ include \%>} não herda automaticamente o
+\texttt{pageEncoding} da página principal, então precisei repetir a diretiva em cada fragmento.
+Outra dificuldade, já numa fase mais avançada, foi perceber que eu mesmo tinha introduzido um
+bug de duplicidade: nem o cadastro manual nem a importação via TMDB verificavam se o mesmo filme
+já existia antes de inserir, o que só ficou evidente testando a aplicação de verdade (encontrei
+``A Odisseia'' e ``Homem-Aranha: Sem Volta Para Casa'' duplicados no meu próprio catálogo) --
+corrigido com uma checagem de duplicidade por título e ano antes do \texttt{INSERT}
+(\texttt{FilmeDAO.existeComTituloEAno}).
+
+\subsection{Aprendizados}
+
+Tecnicamente, o maior aprendizado foi ver como pequenas decisões de arquitetura evitam
+duplicação de código de verdade: centralizar a validação em \texttt{FilmeValidator} significou
+que o cadastro manual e a importação do TMDB puderam compartilhar a mesma lógica de validação e
+de checagem de duplicidade, em vez de eu reimplementá-la duas vezes. Aprendi também, na prática,
+por que \texttt{PreparedStatement} e \textit{try-with-resources} não são só ``boas práticas''
+abstratas: escrever a busca por título/diretor com \texttt{LIKE} me obrigou a pensar exatamente
+onde o dado do usuário entra na consulta (como parâmetro, nunca concatenado à \textit{string}
+SQL), e testar isso empiricamente com um valor de sondagem (\texttt{'}) me deu confiança real, não
+só teórica, de que a implementação era segura. Do ponto de vista de processo, seguir um fluxo de
+especificação antes de código -- e uma revisão de segurança formal antes de considerar qualquer
+funcionalidade concluída -- tornou o pentest \textit{blackbox}, ao final, quase um anticlímax:
+dos dois achados registrados, um já era um risco que eu mesmo tinha identificado e aceito
+conscientemente durante o desenvolvimento, e o outro (cabeçalhos HTTP de segurança ausentes) era
+uma lacuna de defesa em profundidade, não uma vulnerabilidade explorável. Isso me convenceu de
+que revisar segurança continuamente, funcionalidade por funcionalidade, é mais eficaz do que
+deixar tudo para uma auditoria única no final.
+
+\subsection{Trabalhos futuros}
+
+O catálogo, hoje, é uma ferramenta de uso pessoal: um único ``usuário'' implícito, sem contas,
+sem distinção entre quem cadastrou o quê. O trabalho futuro que mais me interessa é justamente
+romper essa limitação e evoluir o projeto de um catálogo pessoal para uma pequena
+\textbf{comunidade de cinema}, inspirada em serviços como o Letterboxd: cada pessoa com sua
+própria conta e perfil, cadastrando os filmes que assistiu, escrevendo resenhas próprias -- com
+nota pessoal, numa escala definida por mim (por exemplo, 0 a 5 estrelas), distinta da
+\texttt{notaTmdb} pública já existente -- e interagindo com as resenhas de outras pessoas: curtir,
+comentar, seguir outros perfis e ver um feed de atividade de quem você segue.
+
+Do ponto de vista técnico, isso significa uma mudança de escopo relevante, não só uma
+funcionalidade a mais. Eu precisaria introduzir autenticação de usuários -- o que reabriria, com
+peso muito maior, a discussão de controle de acesso da Seção~\ref{sec:seguranca}, hoje aceita
+como risco justamente porque não há contas de usuário --, uma nova entidade \texttt{Usuario} e
+uma entidade \texttt{Resenha} (ligando \texttt{Usuario} e \texttt{Filme}, com nota pessoal, texto
+e data), além de uma relação \texttt{Usuario}--\texttt{Usuario} para modelar ``seguir''. Cada
+resenha passaria a ter um dono, e as operações de editar/excluir precisariam verificar
+explicitamente que o usuário autenticado é o dono do recurso -- não mais qualquer visitante
+podendo alterar qualquer registro, como acontece hoje. Escalar dessa forma também levantaria
+questões que o projeto atual não precisa responder: paginação da listagem e do feed (o catálogo
+hoje é pequeno o suficiente para carregar tudo de uma vez), índices adicionais no banco de dados
+para as novas chaves estrangeiras, e, possivelmente, cache das chamadas ao TMDB para não repetir
+a mesma consulta externa toda vez que várias pessoas revisarem o mesmo filme. É um passo natural
+depois deste projeto acadêmico -- e, na minha opinião, o que tornaria o catálogo genuinamente
+útil além do uso pessoal que já faço dele hoje.
 
 % ============================================================================
 % 8. REFERÊNCIAS
