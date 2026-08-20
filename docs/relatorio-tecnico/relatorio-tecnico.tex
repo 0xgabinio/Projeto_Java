@@ -88,8 +88,10 @@
 
     \vfill
 
-    % TODO (autor): preencher nome completo do(a) estudante.
-    {\large Autor(a): \underline{\hspace{7cm}}}\\[0.4cm]
+    % Assinatura em fonte cursiva (URW Chancery L, família "pzc") -- requer o pacote
+    % texlive-psnfss, parte de qualquer instalação TeX Live completa/scheme-basic+psnfss.
+    {\large Autor(a):}\\[0.15cm]
+    {\fontfamily{pzc}\fontsize{28}{32}\selectfont Antonio Gabinio Filho}\\[0.4cm]
     {\large E-mail de contato: tomgabinio@gmail.com}\\[0.4cm]
     {\large Cruzeiro do Sul Virtual -- 2026}
 
@@ -650,7 +652,7 @@ correção futura.
 
 Após a conclusão de todas as funcionalidades mandatórias, executei uma trilha independente de
 teste de penetração \textit{blackbox}, escopada pelo OWASP Top 10:2021, contra a aplicação em
-execução, sob a regra inegociável de \textbf{reportar, nunca explorar}. Registrei dois achados,
+execução. Registrei dois achados,
 ambos já triados e \textbf{encerrados}:
 
 \begin{itemize}
@@ -670,7 +672,7 @@ ambos já triados e \textbf{encerrados}:
         cabeçalhos de defesa em profundidade como \texttt{X-Frame-Options},
         \texttt{Content-Security-Policy}, \texttt{X-Content-Type-Options} e um atributo
         \texttt{SameSite} explícito no cookie de sessão. Eu \textbf{corrigi} efetivamente este
-        achado: implementei um novo filtro de \textit{servlet}, \texttt{CabecalhosSegurancaFilter},
+        achado: implementei um novo filtro de \textit{servlet},  \texttt{CabecalhosSegurancaFilter},
         que adiciona os quatro primeiros cabeçalhos a toda resposta HTTP (com uma
         \textit{Content Security Policy} restrita aos domínios efetivamente usados pela
         aplicação -- CDN do Bootstrap e imagens do TMDB), e configurei o cookie de sessão com
